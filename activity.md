@@ -133,3 +133,32 @@
 - `rust-server/templates/partials/match_list.html` (new file)
 
 ---
+
+## Task 7 Completed - 2026-01-14
+
+### Create match list template (verification)
+
+**Verification performed:**
+- Template `templates/partials/match_list.html` was already created in Task 6
+- Ran `cargo check` - compilation passed successfully
+- Started server and tested `/htmx/matches` endpoint via curl
+- Template renders correctly with:
+  - Hero filter dropdown populated with all 53 heroes
+  - Outcome filter dropdown (All Outcomes, Wins, Losses)
+  - Match cards displaying with `match-win`/`match-loss` CSS classes
+  - Match summary showing 8.6M+ matches from DuckDB
+  - Pagination controls with page 1 of 431,107 pages
+  - KDA calculation showing ratio (e.g., "8/1/10 (18.00)")
+  - Net worth displayed in souls
+  - HTMX triggers on filter dropdowns (hx-get, hx-target)
+
+**Template features verified:**
+1. Filter dropdowns with `hx-get="/htmx/matches"` triggers
+2. Match cards with conditional win/loss styling via Tera templating
+3. Pagination controls that preserve filter state in URLs
+4. Empty state message for no matches
+
+**Files verified:**
+- `rust-server/templates/partials/match_list.html`
+
+---
