@@ -97,3 +97,39 @@
 - `rust-server/src/handlers.rs` (updated all handlers to use AppState, added match handlers)
 
 ---
+
+## Task 6 Completed - 2026-01-14
+
+### Add match list handler
+
+**Changes made:**
+- Updated `MatchListQuery` struct with `hero_id`, `account_id`, `outcome`, `page` params (already existed from Task 5)
+- Created `MatchListTemplate` struct with:
+  - `matches: Vec<DisplayMatch>` - list of matches to display
+  - `heroes: Vec<HeroInfo>` - for hero filter dropdown
+  - `total_matches: u64` - total count for pagination info
+  - `current_page: u32` / `total_pages: u32` - pagination state
+  - `selected_hero_id: i32` - current hero filter (0 = all)
+  - `selected_outcome: String` - current outcome filter ("", "win", "loss")
+- Created `DisplayMatch` struct with:
+  - `match_id`, `hero_id`, `hero_name`, `account_id`
+  - `won`, `kills`, `deaths`, `assists`, `net_worth`
+  - `kda` - formatted KDA string with ratio
+- Implemented full `match_list` handler:
+  - Parses query params and converts outcome string to boolean
+  - Builds `DbMatchListQuery` for database layer
+  - Queries database for matches and count
+  - Converts to display format with hero name lookup and KDA calculation
+  - Handles database errors gracefully
+- Created `templates/partials/match_list.html` template:
+  - Hero and outcome filter dropdowns with HTMX triggers
+  - Match cards with win/loss styling classes
+  - KDA and net worth display
+  - Pagination controls with filter preservation
+- Verified compilation with `cargo check` - passed with only expected unused field warnings
+
+**Files modified:**
+- `rust-server/src/handlers.rs` (MatchListTemplate, DisplayMatch, match_list handler)
+- `rust-server/templates/partials/match_list.html` (new file)
+
+---

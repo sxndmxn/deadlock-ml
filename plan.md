@@ -73,7 +73,7 @@
         "Create MatchListTemplate struct",
         "Run cargo check"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 7,

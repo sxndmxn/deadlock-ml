@@ -1,6 +1,7 @@
 //! Route handlers for all endpoints.
 
 use crate::{
+    db::MatchListQuery as DbMatchListQuery,
     markov::{build_sankey_data, find_optimal_path, get_next_probabilities, ItemRecommendation, SankeyData},
     models::{AssociationRule, HeroInfo, ItemInfo},
     AppState,
@@ -418,8 +419,37 @@ pub async fn all_items(
 }
 
 // =============================================================================
-// Match History (placeholder handlers - to be fully implemented in Task 6)
+// Match History
 // =============================================================================
+
+/// Template for rendering match list.
+#[derive(Template)]
+#[template(path = "partials/match_list.html")]
+pub struct MatchListTemplate {
+    pub matches: Vec<DisplayMatch>,
+    pub heroes: Vec<HeroInfo>,
+    pub total_matches: u64,
+    pub current_page: u32,
+    pub total_pages: u32,
+    pub selected_hero_id: i32,  // 0 means no selection
+    pub selected_outcome: String,  // "", "win", or "loss"
+}
+
+/// Display-ready match summary for templates.
+pub struct DisplayMatch {
+    pub match_id: i64,
+    pub hero_id: i32,
+    pub hero_name: String,
+    pub account_id: i64,
+    pub won: bool,
+    pub kills: i32,
+    pub deaths: i32,
+    pub assists: i32,
+    pub net_worth: i32,
+    pub kda: String,
+}
+
+const MATCHES_PER_PAGE: u32 = 20;
 
 /// Query parameters for match list filtering.
 #[derive(Deserialize)]
@@ -430,20 +460,93 @@ pub struct MatchListQuery {
     pub page: Option<u32>,
 }
 
-/// Placeholder handler for match list - returns stub HTML.
-/// Full implementation in Task 6.
+/// Handler for match list with filtering and pagination.
 pub async fn match_list(
-    Query(_params): Query<MatchListQuery>,
-    State(_state): State<AppState>,
+    Query(params): Query<MatchListQuery>,
+    State(state): State<AppState>,
 ) -> impl IntoResponse {
-    Html("<div class=\"match-list\"><p>Match history coming soon...</p></div>".to_string())
+    let page = params.page.unwrap_or(1).max(1);
+    let offset = (page - 1) * MATCHES_PER_PAGE;
+
+    // Convert outcome string to boolean
+    let won = match params.outcome.as_deref() {
+        Some("win") => Some(true),
+        Some("loss") => Some(false),
+        _ => None,
+    };
+
+    // Build database query
+    let db_query = DbMatchListQuery {
+        hero_id: params.hero_id,
+        account_id: params.account_id,
+        won,
+        limit: MATCHES_PER_PAGE,
+        offset,
+    };
+
+    // Query database
+    let matches_result = state.db.get_match_list(&db_query);
+    let count_result = state.db.get_match_count(&db_query);
+
+    // Get hero info for name lookup
+    let metadata = state.store.get_metadata();
+    let heroes = metadata.as_ref().map(|m| m.heroes.clone()).unwrap_or_default();
+    let hero_names: std::collections::HashMap<i32, String> =
+        heroes.iter().map(|h| (h.id, h.name.clone())).collect();
+
+    // Handle database errors gracefully
+    let (matches, total_matches) = match (matches_result, count_result) {
+        (Ok(m), Ok(c)) => (m, c),
+        _ => (Vec::new(), 0),
+    };
+
+    // Convert to display format
+    let display_matches: Vec<DisplayMatch> = matches
+        .into_iter()
+        .map(|m| {
+            let kda = if m.deaths == 0 {
+                format!("{}/{}/{} (Perfect)", m.kills, m.deaths, m.assists)
+            } else {
+                let kda_ratio = (m.kills as f64 + m.assists as f64) / m.deaths as f64;
+                format!("{}/{}/{} ({:.2})", m.kills, m.deaths, m.assists, kda_ratio)
+            };
+            DisplayMatch {
+                match_id: m.match_id,
+                hero_id: m.hero_id,
+                hero_name: hero_names.get(&m.hero_id).cloned().unwrap_or_else(|| format!("Hero {}", m.hero_id)),
+                account_id: m.account_id,
+                won: m.won,
+                kills: m.kills,
+                deaths: m.deaths,
+                assists: m.assists,
+                net_worth: m.net_worth,
+                kda,
+            }
+        })
+        .collect();
+
+    let total_pages = ((total_matches as f64) / (MATCHES_PER_PAGE as f64)).ceil() as u32;
+
+    Html(
+        MatchListTemplate {
+            matches: display_matches,
+            heroes,
+            total_matches,
+            current_page: page,
+            total_pages,
+            selected_hero_id: params.hero_id.unwrap_or(0),
+            selected_outcome: params.outcome.unwrap_or_default(),
+        }
+        .render()
+        .unwrap_or_else(|e| format!("<p>Error rendering template: {}</p>", e)),
+    )
 }
 
-/// Placeholder handler for match detail - returns stub HTML.
-/// Full implementation in Task 6.
+/// Handler for individual match details.
 pub async fn match_detail(
     Path(_match_id): Path<i64>,
     State(_state): State<AppState>,
 ) -> impl IntoResponse {
+    // TODO: Implement full match detail view
     Html("<div class=\"match-detail\"><p>Match details coming soon...</p></div>".to_string())
 }
