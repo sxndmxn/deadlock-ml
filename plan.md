@@ -48,7 +48,7 @@
         "Add MatchSummary struct with match_id, hero_id, account_id, won, kills, deaths, assists, net_worth",
         "Run cargo check"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 5,

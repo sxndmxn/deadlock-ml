@@ -54,3 +54,24 @@
 **File modified:** `rust-server/Cargo.toml`
 
 ---
+
+## Task 4 Completed - 2026-01-14
+
+### Create database module (db.rs)
+
+**Changes made:**
+- Created `rust-server/src/db.rs` with DuckDB integration for match history queries
+- Added `MatchSummary` struct with fields: `match_id`, `hero_id`, `account_id`, `won`, `kills`, `deaths`, `assists`, `net_worth`
+- Added `MatchListQuery` struct for filtering with: `hero_id`, `account_id`, `won`, `limit`, `offset`
+- Implemented `Database` struct with:
+  - `new(data_dir)` - creates in-memory DuckDB connection with parquet support
+  - `get_match_list(query)` - queries match_metadata parquet files with dynamic filters
+  - `get_match_count(query)` - returns total count for pagination
+- Added `mod db;` declaration to `main.rs`
+- Verified compilation with `cargo check` - passed with only expected unused field warnings
+
+**Files modified:**
+- `rust-server/src/db.rs` (new file)
+- `rust-server/src/main.rs` (added mod declaration)
+
+---
