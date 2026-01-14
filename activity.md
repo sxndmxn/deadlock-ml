@@ -330,3 +330,62 @@
 - `ml/train/train_win_predictor.py`
 
 ---
+
+## Task 13 Completed - 2026-01-14
+
+### Create counter-picking model
+
+**Changes made:**
+- Created `ml/train/train_counter.py` with counter-picking data generation
+- Implemented `compute_hero_matchup_matrix()`:
+  - Queries match data to find players on opposing teams
+  - Groups by match_id to get all 12 players per match
+  - Tracks wins/games for each hero pair (A vs B)
+  - Calculates win rate with minimum games threshold
+- Implemented `compute_item_counter_scores()`:
+  - Tracks item effectiveness vs each enemy hero
+  - Computes baseline win rate for each item
+  - Calculates effectiveness score: (win_rate_vs_hero - baseline) / baseline
+  - Positive effectiveness = item counters that hero
+- Implemented `export_counter_matrix()`:
+  - JSON format with metadata (hero/item IDs and names)
+  - Hero matchup matrix with wins, games, win_rate
+  - Item counter scores with baseline and per-hero effectiveness
+- Verified Python syntax with `py_compile`
+- Tested with sample data (10k matches):
+  - Computed 992 valid hero matchups
+  - Generated 2.28 MB JSON output
+  - Verified data structure and content
+
+**Output format:**
+```json
+{
+  "model_type": "counter_matrix",
+  "generated_at": "...",
+  "metadata": {
+    "num_heroes": 32,
+    "num_items": 515,
+    "hero_ids": [...],
+    "item_ids": [...]
+  },
+  "hero_matchups": {
+    "hero_a_id": {
+      "hero_b_id": {"wins": N, "games": N, "win_rate": 0.XX}
+    }
+  },
+  "item_counter_scores": {
+    "item_id": {
+      "baseline_win_rate": 0.XX,
+      "vs_heroes": {
+        "hero_id": {"wins": N, "games": N, "win_rate": 0.XX, "effectiveness": 0.XX}
+      }
+    }
+  }
+}
+```
+
+**Files created:**
+- `ml/train/train_counter.py`
+- `models/counter_matrix.json`
+
+---

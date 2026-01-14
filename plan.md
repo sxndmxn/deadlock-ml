@@ -164,7 +164,7 @@
         "Export to models/counter_matrix.json",
         "Verify export"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 14,
