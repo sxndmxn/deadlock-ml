@@ -263,3 +263,39 @@
 - `rust-server/templates/partials/leaderboard.html`
 
 ---
+
+## Task 11 Completed - 2026-01-14
+
+### Create dynamic build path ML model
+
+**Changes made:**
+- Created `ml/train/` directory structure
+- Created `ml/train/__init__.py`
+- Created `ml/train/train_build_path.py` with:
+  - XGBoost multi-class classifier for next-item prediction
+  - GPU acceleration support via `device: cuda` parameter
+  - Feature engineering:
+    - `owned_items`: one-hot encoded (num_items dimensions)
+    - `game_time`: normalized to 0-1 range (max 45 min)
+    - `enemy_heroes`: one-hot placeholder (num_heroes dimensions)
+  - Training data preparation from parquet match history
+  - Train/validation split (80/20) with early stopping
+  - JSON export format for Rust consumption including:
+    - Feature configuration (item/hero index mappings)
+    - Full XGBoost model in JSON format
+- Added `xgboost>=2.0.0` to pyproject.toml dependencies
+- Verified Python syntax with `py_compile`
+
+**Model architecture:**
+- Input: owned_items_one_hot + game_time + enemy_heroes_one_hot
+- Output: softmax probabilities over all items
+- Uses `multi:softprob` objective for multi-class classification
+
+**Files created:**
+- `ml/train/__init__.py`
+- `ml/train/train_build_path.py`
+
+**Files modified:**
+- `pyproject.toml` (added xgboost dependency)
+
+---

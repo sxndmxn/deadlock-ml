@@ -138,7 +138,7 @@
         "Export model to JSON for Rust consumption",
         "Verify training completes and model exports"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 12,
