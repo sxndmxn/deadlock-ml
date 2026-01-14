@@ -40,3 +40,17 @@
 **File modified:** `rust-server/src/handlers.rs`
 
 ---
+
+## Task 3 Completed - 2026-01-14
+
+### Add DuckDB dependency to Rust server
+
+**Changes made:**
+- Added `duckdb = { version = "1.0", features = ["bundled"] }` to Cargo.toml
+- Verified `parking_lot = "0.12"` was already present (no changes needed)
+- Ran `cargo check` - compilation succeeded with only expected unused field warnings
+- DuckDB bundled feature compiles the full DuckDB C++ library (~18 min first build)
+
+**File modified:** `rust-server/Cargo.toml`
+
+---

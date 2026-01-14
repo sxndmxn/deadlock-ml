@@ -35,7 +35,7 @@
         "Add parking_lot dependency for Mutex",
         "Run cargo check to verify dependencies resolve"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 4,
