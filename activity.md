@@ -162,3 +162,36 @@
 - `rust-server/templates/partials/match_list.html`
 
 ---
+
+## Task 8 Completed - 2026-01-14
+
+### Add leaderboard database queries
+
+**Changes made:**
+- Added `PlayerRanking` struct with fields:
+  - `account_id: i64`
+  - `matches: u32`, `wins: u32`, `win_rate: f64`
+  - `total_kills: u32`, `total_deaths: u32`, `total_assists: u32`
+  - `kda: f64`
+- Added `LeaderboardSort` enum with variants: `WinRate`, `Matches`, `Kills`, `Kda`
+  - Includes `from_str()` parser and `to_sql_order()` for query building
+- Added `LeaderboardQuery` struct with:
+  - `sort_by: LeaderboardSort`
+  - `min_matches: u32` (minimum games filter)
+  - `limit: u32`, `offset: u32` (pagination)
+- Implemented `get_overall_leaderboard()`:
+  - Aggregates all players across all heroes
+  - Groups by account_id with SUM/AVG for stats
+  - Calculates KDA with zero-death handling
+  - Supports dynamic sorting and pagination
+- Implemented `get_hero_leaderboard(hero_id)`:
+  - Same aggregation but filtered by specific hero
+  - Parameterized hero_id for safe queries
+- Implemented `get_leaderboard_count()`:
+  - Returns count of unique players meeting min_matches
+  - Supports optional hero_id filter for pagination
+- Verified compilation with `cargo check` - passed
+
+**File modified:** `rust-server/src/db.rs`
+
+---

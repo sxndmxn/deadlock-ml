@@ -99,7 +99,7 @@
         "Support sort_by, time_range, min_matches params",
         "Run cargo check"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 9,

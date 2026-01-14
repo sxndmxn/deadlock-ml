@@ -28,6 +28,58 @@ pub struct MatchListQuery {
     pub offset: u32,
 }
 
+/// Player ranking entry for leaderboards.
+#[derive(Debug, Clone, Serialize)]
+pub struct PlayerRanking {
+    pub account_id: i64,
+    pub matches: u32,
+    pub wins: u32,
+    pub win_rate: f64,
+    pub total_kills: u32,
+    pub total_deaths: u32,
+    pub total_assists: u32,
+    pub kda: f64,
+}
+
+/// Sort options for leaderboard queries.
+#[derive(Debug, Clone, Copy, Default)]
+pub enum LeaderboardSort {
+    #[default]
+    WinRate,
+    Matches,
+    Kills,
+    Kda,
+}
+
+impl LeaderboardSort {
+    pub fn from_str(s: &str) -> Self {
+        match s.to_lowercase().as_str() {
+            "matches" => Self::Matches,
+            "kills" => Self::Kills,
+            "kda" => Self::Kda,
+            _ => Self::WinRate,
+        }
+    }
+
+    fn to_sql_order(&self) -> &'static str {
+        match self {
+            Self::WinRate => "win_rate DESC, matches DESC",
+            Self::Matches => "matches DESC, win_rate DESC",
+            Self::Kills => "total_kills DESC, matches DESC",
+            Self::Kda => "kda DESC, matches DESC",
+        }
+    }
+}
+
+/// Query parameters for leaderboard queries.
+#[derive(Debug, Default)]
+pub struct LeaderboardQuery {
+    pub sort_by: LeaderboardSort,
+    pub min_matches: u32,
+    pub limit: u32,
+    pub offset: u32,
+}
+
 /// Database wrapper providing access to match history via DuckDB.
 pub struct Database {
     conn: Mutex<Connection>,
@@ -274,6 +326,157 @@ impl Database {
             stmt.query_row([], |row| row.get(0))?
         };
 
+        Ok(count as u64)
+    }
+
+    /// Get overall leaderboard across all heroes.
+    pub fn get_overall_leaderboard(&self, query: &LeaderboardQuery) -> DuckResult<Vec<PlayerRanking>> {
+        let conn = self.conn.lock();
+        let parquet_path = self.data_dir.join("match_metadata/*.parquet");
+
+        let sql = format!(
+            r#"
+            SELECT
+                account_id,
+                COUNT(*) as matches,
+                SUM(CASE WHEN won THEN 1 ELSE 0 END) as wins,
+                AVG(CASE WHEN won THEN 1.0 ELSE 0.0 END) as win_rate,
+                SUM(kills) as total_kills,
+                SUM(deaths) as total_deaths,
+                SUM(assists) as total_assists,
+                CASE
+                    WHEN SUM(deaths) = 0 THEN (SUM(kills) + SUM(assists))::DOUBLE
+                    ELSE (SUM(kills) + SUM(assists))::DOUBLE / SUM(deaths)::DOUBLE
+                END as kda
+            FROM read_parquet('{}')
+            GROUP BY account_id
+            HAVING COUNT(*) >= {}
+            ORDER BY {}
+            LIMIT {} OFFSET {}
+            "#,
+            parquet_path.display(),
+            query.min_matches.max(1),
+            query.sort_by.to_sql_order(),
+            query.limit.max(1).min(100),
+            query.offset
+        );
+
+        let mut stmt = conn.prepare(&sql)?;
+        let rows = stmt.query_map([], |row| {
+            Ok(PlayerRanking {
+                account_id: row.get(0)?,
+                matches: row.get::<_, i64>(1)? as u32,
+                wins: row.get::<_, i64>(2)? as u32,
+                win_rate: row.get(3)?,
+                total_kills: row.get::<_, i64>(4)? as u32,
+                total_deaths: row.get::<_, i64>(5)? as u32,
+                total_assists: row.get::<_, i64>(6)? as u32,
+                kda: row.get(7)?,
+            })
+        })?;
+
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    /// Get leaderboard for a specific hero.
+    pub fn get_hero_leaderboard(
+        &self,
+        hero_id: i32,
+        query: &LeaderboardQuery,
+    ) -> DuckResult<Vec<PlayerRanking>> {
+        let conn = self.conn.lock();
+        let parquet_path = self.data_dir.join("match_metadata/*.parquet");
+
+        let sql = format!(
+            r#"
+            SELECT
+                account_id,
+                COUNT(*) as matches,
+                SUM(CASE WHEN won THEN 1 ELSE 0 END) as wins,
+                AVG(CASE WHEN won THEN 1.0 ELSE 0.0 END) as win_rate,
+                SUM(kills) as total_kills,
+                SUM(deaths) as total_deaths,
+                SUM(assists) as total_assists,
+                CASE
+                    WHEN SUM(deaths) = 0 THEN (SUM(kills) + SUM(assists))::DOUBLE
+                    ELSE (SUM(kills) + SUM(assists))::DOUBLE / SUM(deaths)::DOUBLE
+                END as kda
+            FROM read_parquet('{}')
+            WHERE hero_id = ?
+            GROUP BY account_id
+            HAVING COUNT(*) >= {}
+            ORDER BY {}
+            LIMIT {} OFFSET {}
+            "#,
+            parquet_path.display(),
+            query.min_matches.max(1),
+            query.sort_by.to_sql_order(),
+            query.limit.max(1).min(100),
+            query.offset
+        );
+
+        let mut stmt = conn.prepare(&sql)?;
+        let rows = stmt.query_map(params![hero_id], |row| {
+            Ok(PlayerRanking {
+                account_id: row.get(0)?,
+                matches: row.get::<_, i64>(1)? as u32,
+                wins: row.get::<_, i64>(2)? as u32,
+                win_rate: row.get(3)?,
+                total_kills: row.get::<_, i64>(4)? as u32,
+                total_deaths: row.get::<_, i64>(5)? as u32,
+                total_assists: row.get::<_, i64>(6)? as u32,
+                kda: row.get(7)?,
+            })
+        })?;
+
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    /// Get count of unique players for leaderboard pagination.
+    pub fn get_leaderboard_count(&self, hero_id: Option<i32>, min_matches: u32) -> DuckResult<u64> {
+        let conn = self.conn.lock();
+        let parquet_path = self.data_dir.join("match_metadata/*.parquet");
+
+        let sql = if let Some(hid) = hero_id {
+            format!(
+                r#"
+                SELECT COUNT(*) FROM (
+                    SELECT account_id
+                    FROM read_parquet('{}')
+                    WHERE hero_id = {}
+                    GROUP BY account_id
+                    HAVING COUNT(*) >= {}
+                )
+                "#,
+                parquet_path.display(),
+                hid,
+                min_matches.max(1)
+            )
+        } else {
+            format!(
+                r#"
+                SELECT COUNT(*) FROM (
+                    SELECT account_id
+                    FROM read_parquet('{}')
+                    GROUP BY account_id
+                    HAVING COUNT(*) >= {}
+                )
+                "#,
+                parquet_path.display(),
+                min_matches.max(1)
+            )
+        };
+
+        let mut stmt = conn.prepare(&sql)?;
+        let count: i64 = stmt.query_row([], |row| row.get(0))?;
         Ok(count as u64)
     }
 }
