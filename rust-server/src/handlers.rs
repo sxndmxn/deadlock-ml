@@ -1,0 +1,419 @@
+//! Route handlers for all endpoints.
+
+use crate::{
+    markov::{build_sankey_data, find_optimal_path, get_next_probabilities, ItemRecommendation, SankeyData},
+    models::{AssociationRule, HeroInfo, ItemInfo},
+    store::ModelStore,
+};
+use askama::Template;
+use axum::{
+    extract::{Path, Query, State},
+    response::{Html, IntoResponse},
+    Json,
+};
+use serde::Deserialize;
+use std::sync::Arc;
+
+// =============================================================================
+// Templates
+// =============================================================================
+
+#[derive(Template)]
+#[template(path = "index.html")]
+pub struct IndexTemplate {
+    pub heroes: Vec<HeroInfo>,
+    pub selected_hero_id: i32,
+}
+
+#[derive(Template)]
+#[template(path = "partials/build_path.html")]
+pub struct BuildPathTemplate {
+    pub hero_id: i32,
+    pub hero_name: String,
+    pub match_count: u64,
+    pub win_count: u64,
+    pub build_path: Vec<ItemRecommendation>,
+    pub items: Vec<ItemInfo>,
+}
+
+#[derive(Template)]
+#[template(path = "partials/next_items.html")]
+pub struct NextItemsTemplate {
+    pub next_items: Vec<ItemRecommendation>,
+}
+
+#[derive(Template)]
+#[template(path = "partials/synergy_table.html")]
+pub struct SynergyTableTemplate {
+    pub hero_id: i32,
+    pub rules: Vec<DisplayRule>,
+    pub filter_items: Vec<ItemInfo>,
+    pub total_rules: usize,
+    pub avg_confidence: f64,
+    pub avg_lift: f64,
+}
+
+#[derive(Clone)]
+pub struct DisplayRule {
+    pub antecedent_names: String,
+    pub consequent_names: String,
+    pub support: f64,
+    pub confidence: f64,
+    pub lift: f64,
+}
+
+#[derive(Template)]
+#[template(path = "partials/hero_stats.html")]
+pub struct HeroStatsTemplate {
+    pub heroes: Vec<HeroStat>,
+    pub selected_hero_id: i32,
+}
+
+pub struct HeroStat {
+    pub id: i32,
+    pub name: String,
+    pub match_count: u64,
+    pub win_count: u64,
+    pub win_rate: f64,
+}
+
+// =============================================================================
+// Index
+// =============================================================================
+
+pub async fn index(State(store): State<Arc<ModelStore>>) -> impl IntoResponse {
+    let metadata = store.get_metadata();
+    let heroes = metadata.map(|m| m.heroes).unwrap_or_default();
+    let selected_hero_id = heroes.first().map(|h| h.id).unwrap_or(1);
+
+    Html(
+        IndexTemplate {
+            heroes,
+            selected_hero_id,
+        }
+        .render()
+        .unwrap_or_default(),
+    )
+}
+
+// =============================================================================
+// Build Optimizer
+// =============================================================================
+
+pub async fn build_path(Path(hero_id): Path<i32>, State(store): State<Arc<ModelStore>>) -> impl IntoResponse {
+    let Some(model) = store.get_hero(hero_id) else {
+        return Html("<p>Model not found</p>".to_string());
+    };
+
+    let metadata = store.get_metadata();
+    let items = metadata.map(|m| m.items).unwrap_or_default();
+
+    let build_path = find_optimal_path(&model.markov, 6);
+
+    Html(
+        BuildPathTemplate {
+            hero_id,
+            hero_name: model.hero_name.clone(),
+            match_count: model.match_count,
+            win_count: model.win_count,
+            build_path,
+            items,
+        }
+        .render()
+        .unwrap_or_default(),
+    )
+}
+
+pub async fn next_items(
+    Path((hero_id, item_id)): Path<(i32, i32)>,
+    State(store): State<Arc<ModelStore>>,
+) -> impl IntoResponse {
+    let Some(model) = store.get_hero(hero_id) else {
+        return Html("<p>Model not found</p>".to_string());
+    };
+
+    let next_items = get_next_probabilities(&model.markov, item_id, 5);
+
+    Html(NextItemsTemplate { next_items }.render().unwrap_or_default())
+}
+
+pub async fn sankey_data(Path(hero_id): Path<i32>, State(store): State<Arc<ModelStore>>) -> impl IntoResponse {
+    let Some(model) = store.get_hero(hero_id) else {
+        return Json(SankeyData {
+            nodes: vec![],
+            links: vec![],
+        });
+    };
+
+    Json(build_sankey_data(&model.markov, 5))
+}
+
+// =============================================================================
+// Synergies
+// =============================================================================
+
+#[derive(Deserialize)]
+pub struct SynergyFilter {
+    pub item_id: Option<i64>,
+}
+
+pub async fn synergies(
+    Path(hero_id): Path<i32>,
+    Query(filter): Query<SynergyFilter>,
+    State(store): State<Arc<ModelStore>>,
+) -> impl IntoResponse {
+    let Some(model) = store.get_hero(hero_id) else {
+        return Html("<p>Model not found</p>".to_string());
+    };
+
+    let metadata = store.get_metadata();
+    let items = metadata.map(|m| m.items).unwrap_or_default();
+    let item_names: std::collections::HashMap<i64, String> = items.iter().map(|i| (i.id, i.name.clone())).collect();
+
+    // Filter rules if item_id specified
+    let filtered_rules: Vec<&AssociationRule> = if let Some(filter_id) = filter.item_id {
+        model
+            .association_rules
+            .iter()
+            .filter(|r| r.antecedents.contains(&filter_id) || r.consequents.contains(&filter_id))
+            .collect()
+    } else {
+        model.association_rules.iter().collect()
+    };
+
+    // Convert to display format
+    let rules: Vec<DisplayRule> = filtered_rules
+        .iter()
+        .take(20)
+        .map(|r| DisplayRule {
+            antecedent_names: r
+                .antecedents
+                .iter()
+                .map(|id| item_names.get(id).cloned().unwrap_or_else(|| format!("Item {id}")))
+                .collect::<Vec<_>>()
+                .join(", "),
+            consequent_names: r
+                .consequents
+                .iter()
+                .map(|id| item_names.get(id).cloned().unwrap_or_else(|| format!("Item {id}")))
+                .collect::<Vec<_>>()
+                .join(", "),
+            support: r.support,
+            confidence: r.confidence,
+            lift: r.lift,
+        })
+        .collect();
+
+    // Get items that appear in rules for filter dropdown
+    let mut filter_item_ids: std::collections::HashSet<i64> = std::collections::HashSet::new();
+    for rule in &model.association_rules {
+        filter_item_ids.extend(&rule.antecedents);
+        filter_item_ids.extend(&rule.consequents);
+    }
+    let mut filter_items: Vec<ItemInfo> = items
+        .into_iter()
+        .filter(|i| filter_item_ids.contains(&i.id))
+        .collect();
+    filter_items.sort_by(|a, b| a.name.cmp(&b.name));
+
+    let total_rules = filtered_rules.len();
+    let avg_confidence = if total_rules > 0 {
+        filtered_rules.iter().map(|r| r.confidence).sum::<f64>() / total_rules as f64
+    } else {
+        0.0
+    };
+    let avg_lift = if total_rules > 0 {
+        filtered_rules.iter().map(|r| r.lift).sum::<f64>() / total_rules as f64
+    } else {
+        0.0
+    };
+
+    Html(
+        SynergyTableTemplate {
+            hero_id,
+            rules,
+            filter_items,
+            total_rules,
+            avg_confidence,
+            avg_lift,
+        }
+        .render()
+        .unwrap_or_default(),
+    )
+}
+
+/// Returns JSON data for the synergy network graph.
+#[derive(serde::Serialize)]
+pub struct GraphData {
+    pub nodes: Vec<GraphNode>,
+    pub edges: Vec<GraphEdge>,
+}
+
+#[derive(serde::Serialize)]
+pub struct GraphNode {
+    pub id: String,
+    pub label: String,
+}
+
+#[derive(serde::Serialize)]
+pub struct GraphEdge {
+    pub from: String,
+    pub to: String,
+    pub width: f64,
+}
+
+pub async fn synergy_graph(Path(hero_id): Path<i32>, State(store): State<Arc<ModelStore>>) -> impl IntoResponse {
+    let Some(model) = store.get_hero(hero_id) else {
+        return Json(GraphData {
+            nodes: vec![],
+            edges: vec![],
+        });
+    };
+
+    let metadata = store.get_metadata();
+    let items = metadata.map(|m| m.items).unwrap_or_default();
+    let item_names: std::collections::HashMap<i64, String> = items.iter().map(|i| (i.id, i.name.clone())).collect();
+
+    // Sort rules by lift and take top 50
+    let mut rules: Vec<_> = model.association_rules.iter().collect();
+    rules.sort_by(|a, b| b.lift.partial_cmp(&a.lift).unwrap_or(std::cmp::Ordering::Equal));
+    rules.truncate(50);
+
+    let mut node_ids: std::collections::HashSet<i64> = std::collections::HashSet::new();
+    let mut edges = Vec::new();
+
+    for rule in &rules {
+        for ant in &rule.antecedents {
+            for cons in &rule.consequents {
+                node_ids.insert(*ant);
+                node_ids.insert(*cons);
+                edges.push(GraphEdge {
+                    from: ant.to_string(),
+                    to: cons.to_string(),
+                    width: (rule.confidence * 5.0).max(1.0),
+                });
+            }
+        }
+    }
+
+    let nodes: Vec<GraphNode> = node_ids
+        .into_iter()
+        .map(|id| GraphNode {
+            id: id.to_string(),
+            label: item_names.get(&id).cloned().unwrap_or_else(|| format!("Item {id}")),
+        })
+        .collect();
+
+    Json(GraphData { nodes, edges })
+}
+
+// =============================================================================
+// Hero Stats
+// =============================================================================
+
+pub async fn hero_stats(
+    Query(params): Query<HeroStatsQuery>,
+    State(store): State<Arc<ModelStore>>,
+) -> impl IntoResponse {
+    let metadata = store.get_metadata();
+    let hero_info = metadata.map(|m| m.heroes).unwrap_or_default();
+
+    let mut heroes: Vec<HeroStat> = hero_info
+        .iter()
+        .filter_map(|info| {
+            let model = store.get_hero(info.id)?;
+            let win_rate = if model.match_count > 0 {
+                model.win_count as f64 / model.match_count as f64
+            } else {
+                0.0
+            };
+            Some(HeroStat {
+                id: info.id,
+                name: info.name.clone(),
+                match_count: model.match_count,
+                win_count: model.win_count,
+                win_rate,
+            })
+        })
+        .collect();
+
+    heroes.sort_by(|a, b| a.win_rate.partial_cmp(&b.win_rate).unwrap_or(std::cmp::Ordering::Equal));
+
+    let selected_hero_id = params.hero_id.unwrap_or_else(|| heroes.first().map(|h| h.id).unwrap_or(1));
+
+    Html(
+        HeroStatsTemplate {
+            heroes,
+            selected_hero_id,
+        }
+        .render()
+        .unwrap_or_default(),
+    )
+}
+
+#[derive(Deserialize)]
+pub struct HeroStatsQuery {
+    pub hero_id: Option<i32>,
+}
+
+// =============================================================================
+// All Items
+// =============================================================================
+
+#[derive(Template)]
+#[template(path = "partials/all_items.html")]
+pub struct AllItemsTemplate {
+    pub items: Vec<DisplayItem>,
+}
+
+pub struct DisplayItem {
+    pub id: i64,
+    pub name: String,
+    pub tier: i32,
+    pub slot: String,
+    pub icon_url: String,
+    pub win_rate: f64,
+    pub pick_rate: f64,
+    pub match_count: u64,
+}
+
+pub async fn all_items(
+    Path(hero_id): Path<i32>,
+    State(store): State<Arc<ModelStore>>,
+) -> impl IntoResponse {
+    let metadata = store.get_metadata();
+    let raw_items = metadata.map(|m| m.items).unwrap_or_default();
+
+    // Get hero model to access real item stats
+    let hero_model = store.get_hero(hero_id);
+
+    // Build a lookup map from item_id to ItemStats
+    let item_stats_map: std::collections::HashMap<i64, &crate::models::ItemStats> = hero_model
+        .as_ref()
+        .map(|m| m.item_stats.iter().map(|s| (s.item_id, s)).collect())
+        .unwrap_or_default();
+
+    let mut items: Vec<DisplayItem> = raw_items
+        .into_iter()
+        .filter(|i| i.tier > 0) // Filter out ability items with no tier
+        .map(|item| {
+            // Look up real stats, fall back to zeros if not found
+            let stats = item_stats_map.get(&item.id);
+            DisplayItem {
+                id: item.id,
+                name: item.name,
+                tier: item.tier,
+                slot: item.slot,
+                icon_url: item.icon_url,
+                win_rate: stats.map(|s| s.win_rate).unwrap_or(0.0),
+                pick_rate: stats.map(|s| s.pick_rate).unwrap_or(0.0),
+                match_count: stats.map(|s| s.total_matches).unwrap_or(0),
+            }
+        })
+        .collect();
+
+    // Sort by win rate descending by default
+    items.sort_by(|a, b| b.win_rate.partial_cmp(&a.win_rate).unwrap_or(std::cmp::Ordering::Equal));
+
+    Html(AllItemsTemplate { items }.render().unwrap_or_default())
+}

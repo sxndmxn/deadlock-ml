@@ -24,7 +24,7 @@
         "Map DisplayItem to use real stats from lookup",
         "Run cargo check to verify compilation"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 3,

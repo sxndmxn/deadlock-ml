@@ -25,3 +25,18 @@
 **File modified:** `rust-server/src/models.rs`
 
 ---
+
+## Task 2 Completed - 2026-01-14
+
+### Update Rust handlers.rs to use real item stats
+
+**Changes made:**
+- Replaced mock random data generation in `all_items` handler (lines 380-418)
+- Added lookup of hero model via `store.get_hero(hero_id)`
+- Built `item_stats_map: HashMap<i64, &ItemStats>` from `hero_model.item_stats`
+- Updated `DisplayItem` mapping to use real stats from lookup with fallback to zeros
+- Verified compilation with `cargo check` - passed with only expected unused field warnings
+
+**File modified:** `rust-server/src/handlers.rs`
+
+---
