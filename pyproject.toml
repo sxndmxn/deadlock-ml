@@ -1,0 +1,29 @@
+[project]
+name = "deadlock-ml"
+version = "0.1.0"
+description = "ML-powered build optimizer for Deadlock"
+requires-python = ">=3.11"
+dependencies = [
+    "streamlit>=1.28.0",
+    "duckdb>=0.9.0",
+    "mlxtend>=0.23.0",
+    "polars[pyarrow]>=1.0.0",
+    "numpy>=1.24.0",
+    "plotly>=5.18.0",
+    "httpx>=0.25.0",
+    "streamlit-agraph>=0.0.45",
+    "cudf-cu12>=24.0",
+    "cuml-cu12>=24.0",
+]
+
+[project.scripts]
+fetch-data = "scripts.fetch_data:main"
+precompute = "ml.precompute:main"
+
+[[tool.uv.index]]
+url = "https://pypi.nvidia.com"
+name = "nvidia"
+
+[tool.uv.sources]
+cudf-cu12 = { index = "nvidia" }
+cuml-cu12 = { index = "nvidia" }
