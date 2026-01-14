@@ -234,3 +234,32 @@
 - `rust-server/templates/partials/leaderboard.html` (new file)
 
 ---
+
+## Task 10 Completed - 2026-01-14
+
+### Create leaderboard template (verification)
+
+**Verification performed:**
+- Template `templates/partials/leaderboard.html` was created in Task 9
+- Verified all required features are present:
+  1. Rankings table with columns: Rank, Player, Matches, Wins, Win Rate, KDA
+  2. Rank badges for top 3 (gold/silver/bronze with `rank-badge` CSS classes)
+  3. Sort controls dropdown (Win Rate, Matches, Total Kills, KDA)
+  4. Hero filter dropdown for hero-specific leaderboards
+  5. Min matches filter (5, 10, 25, 50, 100)
+  6. Pagination controls with filter preservation
+- Ran `cargo check` and `cargo build` - both passed
+  - Askama validates templates at compile time, confirming template syntax is correct
+- Server starts and responds on leaderboard endpoint
+  - Query is slow due to aggregation over 8.6M+ rows (expected)
+
+**Template features verified:**
+1. Rankings table with conditional rank badge styling via `else if` conditionals
+2. HTMX triggers on all filter dropdowns with `hx-include` for state preservation
+3. Hero mastery via hero_id dropdown switching between `/overall` and `/hero/{id}`
+4. Pagination controls preserve sort and filter state in URL params
+
+**Files verified:**
+- `rust-server/templates/partials/leaderboard.html`
+
+---

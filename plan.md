@@ -125,7 +125,7 @@
         "Add hero mastery tab option",
         "Verify template renders"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 11,
