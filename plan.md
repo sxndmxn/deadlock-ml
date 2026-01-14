@@ -112,7 +112,7 @@
         "Implement leaderboard_hero handler",
         "Run cargo check"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 10,

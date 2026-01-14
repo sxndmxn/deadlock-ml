@@ -65,6 +65,9 @@ async fn main() {
         // Match history routes
         .route("/htmx/matches", get(handlers::match_list))
         .route("/htmx/matches/{match_id}", get(handlers::match_detail))
+        // Leaderboard routes
+        .route("/htmx/leaderboards/overall", get(handlers::leaderboard_overall))
+        .route("/htmx/leaderboards/hero/{hero_id}", get(handlers::leaderboard_hero))
         // Static files
         .nest_service("/static", ServeDir::new("static"))
         .with_state(state);

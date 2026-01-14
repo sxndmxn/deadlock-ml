@@ -1,7 +1,7 @@
 //! Route handlers for all endpoints.
 
 use crate::{
-    db::MatchListQuery as DbMatchListQuery,
+    db::{LeaderboardQuery, LeaderboardSort, MatchListQuery as DbMatchListQuery},
     markov::{build_sankey_data, find_optimal_path, get_next_probabilities, ItemRecommendation, SankeyData},
     models::{AssociationRule, HeroInfo, ItemInfo},
     AppState,
@@ -549,4 +549,185 @@ pub async fn match_detail(
 ) -> impl IntoResponse {
     // TODO: Implement full match detail view
     Html("<div class=\"match-detail\"><p>Match details coming soon...</p></div>".to_string())
+}
+
+// =============================================================================
+// Leaderboard Handlers
+// =============================================================================
+
+/// Query parameters for leaderboard requests.
+#[derive(Debug, Deserialize, Default)]
+pub struct LeaderboardParams {
+    pub sort: Option<String>,
+    pub min_matches: Option<u32>,
+    pub page: Option<u32>,
+}
+
+/// Display struct for a ranked player.
+#[derive(Debug)]
+pub struct DisplayRanking {
+    pub rank: u32,
+    pub account_id: i64,
+    pub matches: u32,
+    pub wins: u32,
+    pub win_rate: String,
+    pub total_kills: u32,
+    pub total_deaths: u32,
+    pub total_assists: u32,
+    pub kda: String,
+}
+
+/// Template for leaderboard display.
+#[derive(Template)]
+#[template(path = "partials/leaderboard.html")]
+pub struct LeaderboardTemplate {
+    pub rankings: Vec<DisplayRanking>,
+    pub heroes: Vec<HeroInfo>,
+    pub total_players: u64,
+    pub current_page: u32,
+    pub total_pages: u32,
+    pub selected_hero_id: i32,
+    pub selected_sort: String,
+    pub min_matches: u32,
+}
+
+const PLAYERS_PER_PAGE: u32 = 50;
+
+/// Handler for overall leaderboard.
+pub async fn leaderboard_overall(
+    Query(params): Query<LeaderboardParams>,
+    State(state): State<AppState>,
+) -> impl IntoResponse {
+    let page = params.page.unwrap_or(1).max(1);
+    let min_matches = params.min_matches.unwrap_or(10);
+    let sort_str = params.sort.clone().unwrap_or_else(|| "win_rate".to_string());
+    let sort = LeaderboardSort::from_str(&sort_str);
+
+    let db_query = LeaderboardQuery {
+        sort_by: sort,
+        min_matches,
+        limit: PLAYERS_PER_PAGE,
+        offset: (page - 1) * PLAYERS_PER_PAGE,
+    };
+
+    // Get heroes for dropdown
+    let heroes = state
+        .store
+        .get_metadata()
+        .map(|m| m.heroes.clone())
+        .unwrap_or_default();
+
+    // Query database
+    let (rankings, total_players) = match (
+        state.db.get_overall_leaderboard(&db_query),
+        state.db.get_leaderboard_count(None, min_matches),
+    ) {
+        (Ok(r), Ok(c)) => (r, c),
+        _ => (Vec::new(), 0),
+    };
+
+    // Convert to display format
+    let start_rank = (page - 1) * PLAYERS_PER_PAGE;
+    let display_rankings: Vec<DisplayRanking> = rankings
+        .into_iter()
+        .enumerate()
+        .map(|(i, r)| DisplayRanking {
+            rank: start_rank + (i as u32) + 1,
+            account_id: r.account_id,
+            matches: r.matches,
+            wins: r.wins,
+            win_rate: format!("{:.1}%", r.win_rate * 100.0),
+            total_kills: r.total_kills,
+            total_deaths: r.total_deaths,
+            total_assists: r.total_assists,
+            kda: format!("{:.2}", r.kda),
+        })
+        .collect();
+
+    let total_pages = ((total_players as f64) / (PLAYERS_PER_PAGE as f64)).ceil() as u32;
+
+    Html(
+        LeaderboardTemplate {
+            rankings: display_rankings,
+            heroes,
+            total_players,
+            current_page: page,
+            total_pages,
+            selected_hero_id: 0,
+            selected_sort: sort_str,
+            min_matches,
+        }
+        .render()
+        .unwrap_or_else(|e| format!("<p>Error rendering template: {}</p>", e)),
+    )
+}
+
+/// Handler for hero-specific leaderboard.
+pub async fn leaderboard_hero(
+    Path(hero_id): Path<i32>,
+    Query(params): Query<LeaderboardParams>,
+    State(state): State<AppState>,
+) -> impl IntoResponse {
+    let page = params.page.unwrap_or(1).max(1);
+    let min_matches = params.min_matches.unwrap_or(5);
+    let sort_str = params.sort.clone().unwrap_or_else(|| "win_rate".to_string());
+    let sort = LeaderboardSort::from_str(&sort_str);
+
+    let db_query = LeaderboardQuery {
+        sort_by: sort,
+        min_matches,
+        limit: PLAYERS_PER_PAGE,
+        offset: (page - 1) * PLAYERS_PER_PAGE,
+    };
+
+    // Get heroes for dropdown
+    let heroes = state
+        .store
+        .get_metadata()
+        .map(|m| m.heroes.clone())
+        .unwrap_or_default();
+
+    // Query database
+    let (rankings, total_players) = match (
+        state.db.get_hero_leaderboard(hero_id, &db_query),
+        state.db.get_leaderboard_count(Some(hero_id), min_matches),
+    ) {
+        (Ok(r), Ok(c)) => (r, c),
+        _ => (Vec::new(), 0),
+    };
+
+    // Convert to display format
+    let start_rank = (page - 1) * PLAYERS_PER_PAGE;
+    let display_rankings: Vec<DisplayRanking> = rankings
+        .into_iter()
+        .enumerate()
+        .map(|(i, r)| DisplayRanking {
+            rank: start_rank + (i as u32) + 1,
+            account_id: r.account_id,
+            matches: r.matches,
+            wins: r.wins,
+            win_rate: format!("{:.1}%", r.win_rate * 100.0),
+            total_kills: r.total_kills,
+            total_deaths: r.total_deaths,
+            total_assists: r.total_assists,
+            kda: format!("{:.2}", r.kda),
+        })
+        .collect();
+
+    let total_pages = ((total_players as f64) / (PLAYERS_PER_PAGE as f64)).ceil() as u32;
+
+    Html(
+        LeaderboardTemplate {
+            rankings: display_rankings,
+            heroes,
+            total_players,
+            current_page: page,
+            total_pages,
+            selected_hero_id: hero_id,
+            selected_sort: sort_str,
+            min_matches,
+        }
+        .render()
+        .unwrap_or_else(|e| format!("<p>Error rendering template: {}</p>", e)),
+    )
 }

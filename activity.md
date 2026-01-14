@@ -195,3 +195,42 @@
 **File modified:** `rust-server/src/db.rs`
 
 ---
+
+## Task 9 Completed - 2026-01-14
+
+### Add leaderboard routes and handlers
+
+**Changes made:**
+- Added routes to `main.rs`:
+  - `/htmx/leaderboards/overall` -> `handlers::leaderboard_overall`
+  - `/htmx/leaderboards/hero/{hero_id}` -> `handlers::leaderboard_hero`
+- Added imports for `LeaderboardQuery` and `LeaderboardSort` from db module
+- Created `LeaderboardParams` query struct with:
+  - `sort: Option<String>` (win_rate, matches, kills, kda)
+  - `min_matches: Option<u32>`
+  - `page: Option<u32>`
+- Created `DisplayRanking` struct for template rendering:
+  - `rank`, `account_id`, `matches`, `wins`, `win_rate`, `total_kills`, `total_deaths`, `total_assists`, `kda`
+- Created `LeaderboardTemplate` struct with Askama template binding
+- Implemented `leaderboard_overall` handler:
+  - Parses query params for sorting and filtering
+  - Queries DuckDB for aggregated player stats
+  - Converts to display format with percentage formatting
+  - Handles pagination (50 players per page)
+- Implemented `leaderboard_hero` handler:
+  - Same as overall but filters by hero_id
+  - Lower default min_matches (5 vs 10)
+- Created `templates/partials/leaderboard.html`:
+  - Hero filter dropdown
+  - Sort dropdown (Win Rate, Matches, Total Kills, KDA)
+  - Min matches filter (5, 10, 25, 50, 100)
+  - Rankings table with rank badges (gold/silver/bronze)
+  - Pagination controls
+- Verified compilation with `cargo check` - passed
+
+**Files modified:**
+- `rust-server/src/main.rs` (routes)
+- `rust-server/src/handlers.rs` (handlers, templates, structs)
+- `rust-server/templates/partials/leaderboard.html` (new file)
+
+---

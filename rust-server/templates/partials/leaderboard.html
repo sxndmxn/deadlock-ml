@@ -1,0 +1,97 @@
+<section class="leaderboard-tab">
+    <h2>Leaderboard</h2>
+
+    <div class="leaderboard-filters">
+        <select name="hero_id" hx-get="/htmx/leaderboards/{% if selected_hero_id == 0 %}overall{% else %}hero/{{ selected_hero_id }}{% endif %}" hx-target="#leaderboard-content" hx-include="[name='sort'], [name='min_matches']">
+            <option value="0" {% if selected_hero_id == 0 %}selected{% endif %}>All Heroes</option>
+            {% for hero in heroes %}
+            <option value="{{ hero.id }}" {% if selected_hero_id == hero.id %}selected{% endif %}>{{ hero.name }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="sort" hx-get="/htmx/leaderboards/{% if selected_hero_id == 0 %}overall{% else %}hero/{{ selected_hero_id }}{% endif %}" hx-target="#leaderboard-content" hx-include="[name='hero_id'], [name='min_matches']">
+            <option value="win_rate" {% if selected_sort == "win_rate" %}selected{% endif %}>Win Rate</option>
+            <option value="matches" {% if selected_sort == "matches" %}selected{% endif %}>Matches Played</option>
+            <option value="kills" {% if selected_sort == "kills" %}selected{% endif %}>Total Kills</option>
+            <option value="kda" {% if selected_sort == "kda" %}selected{% endif %}>KDA</option>
+        </select>
+
+        <select name="min_matches" hx-get="/htmx/leaderboards/{% if selected_hero_id == 0 %}overall{% else %}hero/{{ selected_hero_id }}{% endif %}" hx-target="#leaderboard-content" hx-include="[name='hero_id'], [name='sort']">
+            <option value="5" {% if min_matches == 5 %}selected{% endif %}>Min 5 matches</option>
+            <option value="10" {% if min_matches == 10 %}selected{% endif %}>Min 10 matches</option>
+            <option value="25" {% if min_matches == 25 %}selected{% endif %}>Min 25 matches</option>
+            <option value="50" {% if min_matches == 50 %}selected{% endif %}>Min 50 matches</option>
+            <option value="100" {% if min_matches == 100 %}selected{% endif %}>Min 100 matches</option>
+        </select>
+    </div>
+
+    <div class="leaderboard-summary">
+        <span>{{ total_players }} players found</span>
+        {% if total_pages > 0 %}
+        <span>Page {{ current_page }} of {{ total_pages }}</span>
+        {% endif %}
+    </div>
+
+    <div id="leaderboard-content">
+        {% if rankings.is_empty() %}
+        <p class="no-rankings">No players found matching criteria.</p>
+        {% else %}
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th class="rank-col">Rank</th>
+                    <th class="player-col">Player</th>
+                    <th class="matches-col">Matches</th>
+                    <th class="wins-col">Wins</th>
+                    <th class="winrate-col">Win Rate</th>
+                    <th class="kda-col">KDA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rankings %}
+                <tr class="{% if r.rank == 1 %}rank-gold{% else if r.rank == 2 %}rank-silver{% else if r.rank == 3 %}rank-bronze{% endif %}">
+                    <td class="rank-col">
+                        {% if r.rank == 1 %}
+                        <span class="rank-badge gold">1</span>
+                        {% else if r.rank == 2 %}
+                        <span class="rank-badge silver">2</span>
+                        {% else if r.rank == 3 %}
+                        <span class="rank-badge bronze">3</span>
+                        {% else %}
+                        {{ r.rank }}
+                        {% endif %}
+                    </td>
+                    <td class="player-col">{{ r.account_id }}</td>
+                    <td class="matches-col">{{ r.matches }}</td>
+                    <td class="wins-col">{{ r.wins }}</td>
+                    <td class="winrate-col">{{ r.win_rate }}</td>
+                    <td class="kda-col">{{ r.kda }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    {% if total_pages > 1 %}
+    <div class="pagination">
+        {% if current_page > 1 %}
+        <button hx-get="/htmx/leaderboards/{% if selected_hero_id == 0 %}overall{% else %}hero/{{ selected_hero_id }}{% endif %}?page={{ current_page - 1 }}&sort={{ selected_sort }}&min_matches={{ min_matches }}"
+                hx-target="#leaderboard-content"
+                class="page-btn">
+            Previous
+        </button>
+        {% endif %}
+
+        <span class="page-info">{{ current_page }} / {{ total_pages }}</span>
+
+        {% if current_page < total_pages %}
+        <button hx-get="/htmx/leaderboards/{% if selected_hero_id == 0 %}overall{% else %}hero/{{ selected_hero_id }}{% endif %}?page={{ current_page + 1 }}&sort={{ selected_sort }}&min_matches={{ min_matches }}"
+                hx-target="#leaderboard-content"
+                class="page-btn">
+            Next
+        </button>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
