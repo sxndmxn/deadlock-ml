@@ -151,7 +151,7 @@
         "Export to models/win_predictor.json",
         "Verify training and export"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 13,

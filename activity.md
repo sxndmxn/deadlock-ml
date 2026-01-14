@@ -299,3 +299,34 @@
 - `pyproject.toml` (added xgboost dependency)
 
 ---
+
+## Task 12 Completed - 2026-01-14
+
+### Create win probability predictor
+
+**Changes made:**
+- Created `ml/train/train_win_predictor.py` with:
+  - XGBoost binary classifier for win prediction
+  - `binary:logistic` objective with AUC evaluation
+  - GPU acceleration support via `device: cuda`
+  - Feature engineering:
+    - `hero_one_hot`: player's hero (num_heroes dimensions)
+    - `weapon_item_count`: normalized count of weapon items
+    - `vitality_item_count`: normalized count of vitality items
+    - `spirit_item_count`: normalized count of spirit items
+    - `net_worth_normalized`: normalized to 0-1 range (max 100k)
+  - Item categorization by slot (weapon/vitality/spirit)
+  - Train/validation split (80/20) with early stopping
+  - JSON export format for Rust consumption
+- Verified Python syntax with `py_compile`
+
+**Model architecture:**
+- Input: hero_one_hot + item_category_counts + net_worth
+- Output: probability of winning (0-1)
+- Uses `binary:logistic` objective
+- Evaluation metrics: logloss, AUC
+
+**Files created:**
+- `ml/train/train_win_predictor.py`
+
+---
