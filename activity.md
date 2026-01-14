@@ -75,3 +75,25 @@
 - `rust-server/src/main.rs` (added mod declaration)
 
 ---
+
+## Task 5 Completed - 2026-01-14
+
+### Add match routes to main.rs
+
+**Changes made:**
+- Created `AppState` struct holding both `Arc<ModelStore>` and `Arc<Database>`
+- Updated all existing handlers to use `State(state): State<AppState>` instead of `State(store): State<Arc<ModelStore>>`
+- Added data_dir initialization for DuckDB data directory
+- Initialized Database in main() and created shared AppState
+- Added routes:
+  - `/htmx/matches` -> `handlers::match_list`
+  - `/htmx/matches/{match_id}` -> `handlers::match_detail`
+- Added placeholder handlers `match_list` and `match_detail` with stub HTML responses
+- Added `MatchListQuery` struct with `hero_id`, `account_id`, `outcome`, `page` params
+- Verified compilation with `cargo check` - passed with only expected unused field warnings
+
+**Files modified:**
+- `rust-server/src/main.rs` (AppState struct, database init, routes)
+- `rust-server/src/handlers.rs` (updated all handlers to use AppState, added match handlers)
+
+---

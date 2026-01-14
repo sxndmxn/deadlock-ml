@@ -61,7 +61,7 @@
         "Add route /htmx/matches/:match_id for match_detail handler",
         "Run cargo check"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 6,

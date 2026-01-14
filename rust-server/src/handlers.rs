@@ -3,7 +3,7 @@
 use crate::{
     markov::{build_sankey_data, find_optimal_path, get_next_probabilities, ItemRecommendation, SankeyData},
     models::{AssociationRule, HeroInfo, ItemInfo},
-    store::ModelStore,
+    AppState,
 };
 use askama::Template;
 use axum::{
@@ -12,7 +12,6 @@ use axum::{
     Json,
 };
 use serde::Deserialize;
-use std::sync::Arc;
 
 // =============================================================================
 // Templates
@@ -81,8 +80,8 @@ pub struct HeroStat {
 // Index
 // =============================================================================
 
-pub async fn index(State(store): State<Arc<ModelStore>>) -> impl IntoResponse {
-    let metadata = store.get_metadata();
+pub async fn index(State(state): State<AppState>) -> impl IntoResponse {
+    let metadata = state.store.get_metadata();
     let heroes = metadata.map(|m| m.heroes).unwrap_or_default();
     let selected_hero_id = heroes.first().map(|h| h.id).unwrap_or(1);
 
@@ -100,12 +99,12 @@ pub async fn index(State(store): State<Arc<ModelStore>>) -> impl IntoResponse {
 // Build Optimizer
 // =============================================================================
 
-pub async fn build_path(Path(hero_id): Path<i32>, State(store): State<Arc<ModelStore>>) -> impl IntoResponse {
-    let Some(model) = store.get_hero(hero_id) else {
+pub async fn build_path(Path(hero_id): Path<i32>, State(state): State<AppState>) -> impl IntoResponse {
+    let Some(model) = state.store.get_hero(hero_id) else {
         return Html("<p>Model not found</p>".to_string());
     };
 
-    let metadata = store.get_metadata();
+    let metadata = state.store.get_metadata();
     let items = metadata.map(|m| m.items).unwrap_or_default();
 
     let build_path = find_optimal_path(&model.markov, 6);
@@ -126,9 +125,9 @@ pub async fn build_path(Path(hero_id): Path<i32>, State(store): State<Arc<ModelS
 
 pub async fn next_items(
     Path((hero_id, item_id)): Path<(i32, i32)>,
-    State(store): State<Arc<ModelStore>>,
+    State(state): State<AppState>,
 ) -> impl IntoResponse {
-    let Some(model) = store.get_hero(hero_id) else {
+    let Some(model) = state.store.get_hero(hero_id) else {
         return Html("<p>Model not found</p>".to_string());
     };
 
@@ -137,8 +136,8 @@ pub async fn next_items(
     Html(NextItemsTemplate { next_items }.render().unwrap_or_default())
 }
 
-pub async fn sankey_data(Path(hero_id): Path<i32>, State(store): State<Arc<ModelStore>>) -> impl IntoResponse {
-    let Some(model) = store.get_hero(hero_id) else {
+pub async fn sankey_data(Path(hero_id): Path<i32>, State(state): State<AppState>) -> impl IntoResponse {
+    let Some(model) = state.store.get_hero(hero_id) else {
         return Json(SankeyData {
             nodes: vec![],
             links: vec![],
@@ -160,13 +159,13 @@ pub struct SynergyFilter {
 pub async fn synergies(
     Path(hero_id): Path<i32>,
     Query(filter): Query<SynergyFilter>,
-    State(store): State<Arc<ModelStore>>,
+    State(state): State<AppState>,
 ) -> impl IntoResponse {
-    let Some(model) = store.get_hero(hero_id) else {
+    let Some(model) = state.store.get_hero(hero_id) else {
         return Html("<p>Model not found</p>".to_string());
     };
 
-    let metadata = store.get_metadata();
+    let metadata = state.store.get_metadata();
     let items = metadata.map(|m| m.items).unwrap_or_default();
     let item_names: std::collections::HashMap<i64, String> = items.iter().map(|i| (i.id, i.name.clone())).collect();
 
@@ -262,15 +261,15 @@ pub struct GraphEdge {
     pub width: f64,
 }
 
-pub async fn synergy_graph(Path(hero_id): Path<i32>, State(store): State<Arc<ModelStore>>) -> impl IntoResponse {
-    let Some(model) = store.get_hero(hero_id) else {
+pub async fn synergy_graph(Path(hero_id): Path<i32>, State(state): State<AppState>) -> impl IntoResponse {
+    let Some(model) = state.store.get_hero(hero_id) else {
         return Json(GraphData {
             nodes: vec![],
             edges: vec![],
         });
     };
 
-    let metadata = store.get_metadata();
+    let metadata = state.store.get_metadata();
     let items = metadata.map(|m| m.items).unwrap_or_default();
     let item_names: std::collections::HashMap<i64, String> = items.iter().map(|i| (i.id, i.name.clone())).collect();
 
@@ -313,15 +312,15 @@ pub async fn synergy_graph(Path(hero_id): Path<i32>, State(store): State<Arc<Mod
 
 pub async fn hero_stats(
     Query(params): Query<HeroStatsQuery>,
-    State(store): State<Arc<ModelStore>>,
+    State(state): State<AppState>,
 ) -> impl IntoResponse {
-    let metadata = store.get_metadata();
+    let metadata = state.store.get_metadata();
     let hero_info = metadata.map(|m| m.heroes).unwrap_or_default();
 
     let mut heroes: Vec<HeroStat> = hero_info
         .iter()
         .filter_map(|info| {
-            let model = store.get_hero(info.id)?;
+            let model = state.store.get_hero(info.id)?;
             let win_rate = if model.match_count > 0 {
                 model.win_count as f64 / model.match_count as f64
             } else {
@@ -379,13 +378,13 @@ pub struct DisplayItem {
 
 pub async fn all_items(
     Path(hero_id): Path<i32>,
-    State(store): State<Arc<ModelStore>>,
+    State(state): State<AppState>,
 ) -> impl IntoResponse {
-    let metadata = store.get_metadata();
+    let metadata = state.store.get_metadata();
     let raw_items = metadata.map(|m| m.items).unwrap_or_default();
 
     // Get hero model to access real item stats
-    let hero_model = store.get_hero(hero_id);
+    let hero_model = state.store.get_hero(hero_id);
 
     // Build a lookup map from item_id to ItemStats
     let item_stats_map: std::collections::HashMap<i64, &crate::models::ItemStats> = hero_model
@@ -416,4 +415,35 @@ pub async fn all_items(
     items.sort_by(|a, b| b.win_rate.partial_cmp(&a.win_rate).unwrap_or(std::cmp::Ordering::Equal));
 
     Html(AllItemsTemplate { items }.render().unwrap_or_default())
+}
+
+// =============================================================================
+// Match History (placeholder handlers - to be fully implemented in Task 6)
+// =============================================================================
+
+/// Query parameters for match list filtering.
+#[derive(Deserialize)]
+pub struct MatchListQuery {
+    pub hero_id: Option<i32>,
+    pub account_id: Option<i64>,
+    pub outcome: Option<String>,
+    pub page: Option<u32>,
+}
+
+/// Placeholder handler for match list - returns stub HTML.
+/// Full implementation in Task 6.
+pub async fn match_list(
+    Query(_params): Query<MatchListQuery>,
+    State(_state): State<AppState>,
+) -> impl IntoResponse {
+    Html("<div class=\"match-list\"><p>Match history coming soon...</p></div>".to_string())
+}
+
+/// Placeholder handler for match detail - returns stub HTML.
+/// Full implementation in Task 6.
+pub async fn match_detail(
+    Path(_match_id): Path<i64>,
+    State(_state): State<AppState>,
+) -> impl IntoResponse {
+    Html("<div class=\"match-detail\"><p>Match details coming soon...</p></div>".to_string())
 }
