@@ -613,11 +613,40 @@
 
 ---
 
+## Task 20 Completed - 2026-01-15
+
+### Fix Item Synergies tab - item names and tooltips
+
+**Problem identified:**
+- Association rules in the model file (6.json) use sequential item IDs (100, 101, 200, 300)
+- These IDs are embedded in the model's markov.states with their corresponding names
+- The synergies handler was looking up names from metadata.items which uses different API item IDs (like 1548066885)
+- This ID mismatch caused all items to display as "Item 100", "Item 300", etc.
+
+**Changes made:**
+- Updated `synergies()` handler in handlers.rs to build item_names HashMap from `model.markov.states` instead of metadata
+- Updated filter_items dropdown to build ItemInfo from markov states
+- Updated `synergy_graph()` handler similarly to use markov states for node labels
+- Added title attributes to synergy_table.html header columns:
+  - Antecedent: "Items that are purchased first (the 'if' part of the rule)"
+  - Consequent: "Items that tend to follow the antecedent (the 'then' part of the rule)"
+  - Support: "How often this item combination appears in all winning builds (higher = more common)"
+  - Confidence: "When antecedent is bought, how often consequent follows (higher = stronger relationship)"
+  - Lift: "How much more likely the consequent is compared to random chance (>1 = positive association)"
+- Verified compilation with `cargo check` - passed with expected warnings
+- Tested endpoints - item names display correctly (e.g., "Basic Magazine", "Extra Health")
+
+**Files modified:**
+- `rust-server/src/handlers.rs` (synergies and synergy_graph handlers)
+- `rust-server/templates/partials/synergy_table.html` (added tooltips)
+
+---
+
 ## PHASE 6 IN PROGRESS
 
 Tasks 1-18 complete. Now working on Phase 6 UI Fixes:
 - Task 19: ✅ Fix All Items tab (completed)
-- Task 20: ❌ Fix Item Synergies tab (pending)
+- Task 20: ✅ Fix Item Synergies tab (completed)
 - Task 21: ❌ Replace Hero Stats with table (pending)
 - Task 22: ❌ Redesign Match History to Hero Matchups (pending)
 - Task 23: ❌ Redesign Build Optimizer with tree (pending)

@@ -166,9 +166,14 @@ pub async fn synergies(
         return Html("<p>Model not found</p>".to_string());
     };
 
-    let metadata = state.store.get_metadata();
-    let items = metadata.map(|m| m.items).unwrap_or_default();
-    let item_names: std::collections::HashMap<i64, String> = items.iter().map(|i| (i.id, i.name.clone())).collect();
+    // Build item name map from markov states (embedded in model) for correct ID matching
+    let item_names: std::collections::HashMap<i64, String> = model
+        .markov
+        .states
+        .iter()
+        .filter(|s| s.item_id >= 0) // Skip START state (-1)
+        .map(|s| (s.item_id as i64, s.name.clone()))
+        .collect();
 
     // Filter rules if item_id specified
     let filtered_rules: Vec<&AssociationRule> = if let Some(filter_id) = filter.item_id {
@@ -205,14 +210,24 @@ pub async fn synergies(
         .collect();
 
     // Get items that appear in rules for filter dropdown
+    // Build from markov states since those have the correct IDs that match association rules
     let mut filter_item_ids: std::collections::HashSet<i64> = std::collections::HashSet::new();
     for rule in &model.association_rules {
         filter_item_ids.extend(&rule.antecedents);
         filter_item_ids.extend(&rule.consequents);
     }
-    let mut filter_items: Vec<ItemInfo> = items
-        .into_iter()
-        .filter(|i| filter_item_ids.contains(&i.id))
+    let mut filter_items: Vec<ItemInfo> = model
+        .markov
+        .states
+        .iter()
+        .filter(|s| s.item_id >= 0 && filter_item_ids.contains(&(s.item_id as i64)))
+        .map(|s| ItemInfo {
+            id: s.item_id as i64,
+            name: s.name.clone(),
+            slot: String::new(),
+            tier: 0,
+            icon_url: String::new(),
+        })
         .collect();
     filter_items.sort_by(|a, b| a.name.cmp(&b.name));
 
@@ -270,9 +285,14 @@ pub async fn synergy_graph(Path(hero_id): Path<i32>, State(state): State<AppStat
         });
     };
 
-    let metadata = state.store.get_metadata();
-    let items = metadata.map(|m| m.items).unwrap_or_default();
-    let item_names: std::collections::HashMap<i64, String> = items.iter().map(|i| (i.id, i.name.clone())).collect();
+    // Build item name map from markov states (embedded in model) for correct ID matching
+    let item_names: std::collections::HashMap<i64, String> = model
+        .markov
+        .states
+        .iter()
+        .filter(|s| s.item_id >= 0) // Skip START state (-1)
+        .map(|s| (s.item_id as i64, s.name.clone()))
+        .collect();
 
     // Sort rules by lift and take top 50
     let mut rules: Vec<_> = model.association_rules.iter().collect();

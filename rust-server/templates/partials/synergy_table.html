@@ -1,0 +1,100 @@
+<section class="synergies-tab">
+    <div class="filter-bar">
+        <label>Filter by item:</label>
+        <select hx-get="/htmx/synergies/{{ hero_id }}"
+                hx-trigger="change"
+                hx-target="#tab-content"
+                hx-swap="innerHTML"
+                hx-include="this"
+                name="item_id">
+            <option value="">Show all</option>
+            {% for item in filter_items %}
+            <option value="{{ item.id }}">
+                {{ item.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <h2>Item Relationship Graph</h2>
+    <div id="synergy-graph" style="height: 500px; border: 1px solid #ddd;"></div>
+
+    <hr>
+
+    <h2>Association Rules</h2>
+    {% if rules.is_empty() %}
+    <p>No association rules found.</p>
+    {% else %}
+    <table class="rules-table">
+        <thead>
+            <tr>
+                <th title="Items that are purchased first (the 'if' part of the rule)">Antecedent</th>
+                <th title="Items that tend to follow the antecedent (the 'then' part of the rule)">Consequent</th>
+                <th title="How often this item combination appears in all winning builds (higher = more common)">Support</th>
+                <th title="When antecedent is bought, how often consequent follows (higher = stronger relationship)">Confidence</th>
+                <th title="How much more likely the consequent is compared to random chance (>1 = positive association)">Lift</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rule in rules %}
+            <tr>
+                <td>{{ rule.antecedent_names }}</td>
+                <td>{{ rule.consequent_names }}</td>
+                <td>{{ "{:.1}"|format(rule.support * 100.0) }}%</td>
+                <td>{{ "{:.1}"|format(rule.confidence * 100.0) }}%</td>
+                <td>{{ "{:.2}"|format(rule.lift) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <div class="metrics">
+        <div class="metric">
+            <span class="value">{{ total_rules }}</span>
+            <span class="label">Total Rules</span>
+        </div>
+        <div class="metric">
+            <span class="value">{{ "{:.1}"|format(avg_confidence * 100.0) }}%</span>
+            <span class="label">Avg Confidence</span>
+        </div>
+        <div class="metric">
+            <span class="value">{{ "{:.2}"|format(avg_lift) }}</span>
+            <span class="label">Avg Lift</span>
+        </div>
+    </div>
+</section>
+
+<script>
+(function() {
+    fetch('/htmx/synergy-graph/{{ hero_id }}')
+        .then(r => r.json())
+        .then(data => {
+            if (data.nodes.length === 0) return;
+
+            const nodes = new vis.DataSet(data.nodes.map(n => ({
+                id: n.id,
+                label: n.label,
+                color: '#97C2FC'
+            })));
+
+            const edges = new vis.DataSet(data.edges.map(e => ({
+                from: e.from,
+                to: e.to,
+                width: e.width,
+                arrows: 'to'
+            })));
+
+            const container = document.getElementById('synergy-graph');
+            new vis.Network(container, { nodes, edges }, {
+                physics: {
+                    enabled: true,
+                    solver: 'forceAtlas2Based'
+                },
+                edges: {
+                    smooth: true
+                }
+            });
+        });
+})();
+</script>

@@ -253,7 +253,7 @@
         "Fix synergy graph node labels to show item names instead of IDs",
         "Run cargo check and verify tooltips appear on hover"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 21,
