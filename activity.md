@@ -431,3 +431,44 @@
 - `models/full_build_6.json` (test output)
 
 ---
+
+## Task 15 Completed - 2026-01-14
+
+### Add ONNX Runtime to Rust for ML inference
+
+**Changes made:**
+- Added `ort = "2.0.0-rc.11"` to Cargo.toml (using latest RC since 2.0 stable not released)
+- Created `rust-server/src/ml_inference.rs` with comprehensive ML inference module:
+  - `FullBuildModel` - Loads and parses full build optimizer JSON models
+  - `CounterMatrix` - Loads hero matchup and item counter matrices
+  - `MlInference` - Main inference engine with model loading and caching
+- Implemented model loading from JSON files:
+  - Loads `full_build_*.json` files with synergy scores, item win rates, precomputed builds
+  - Loads `counter_matrix.json` with hero matchups and item counter effectiveness
+  - Builds symmetric synergy lookup table for fast (item_a, item_b) queries
+- Implemented inference methods:
+  - `get_precomputed_build()` - Returns best precomputed 12-item build
+  - `get_synergy_score()` - Gets synergy score between two items
+  - `get_hero_matchup()` - Gets win rate for hero A vs hero B
+  - `get_item_counter_effectiveness()` - Gets item effectiveness vs enemy hero
+  - `get_counter_items()` - Recommends counter items against enemy team
+  - `recommend_next_items()` - ML-based recommendations with Markov fallback
+- Added fallback to Markov chains:
+  - `MAX_INFERENCE_TIME_MS = 50` constant for timeout threshold
+  - `recommend_next_items()` attempts synergy-based ML inference first
+  - Falls back to `markov::get_next_probabilities()` if timeout or no model
+- Verified compilation with `cargo check` - passed with expected unused warnings
+
+**Module architecture:**
+- Synergy-based scoring: 60% synergy score + 40% win rate
+- Counter-picking: sum item effectiveness vs all enemy heroes
+- Markov fallback: use existing Markov chain probabilities
+
+**Files created:**
+- `rust-server/src/ml_inference.rs`
+
+**Files modified:**
+- `rust-server/Cargo.toml` (added ort dependency)
+- `rust-server/src/main.rs` (added mod declaration)
+
+---

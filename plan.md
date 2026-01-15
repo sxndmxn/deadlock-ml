@@ -190,7 +190,7 @@
         "Add fallback to Markov chains if inference too slow",
         "Run cargo check"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 16,

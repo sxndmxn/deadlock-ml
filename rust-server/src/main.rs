@@ -1,6 +1,7 @@
 mod db;
 mod handlers;
 mod markov;
+mod ml_inference;
 mod models;
 mod store;
 

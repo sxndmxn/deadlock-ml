@@ -30,3 +30,6 @@ thiserror = "2"
 
 # Database
 duckdb = { version = "1.0", features = ["bundled"] }
+
+# ML inference
+ort = "2.0.0-rc.11"
