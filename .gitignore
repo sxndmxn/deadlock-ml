@@ -4,6 +4,19 @@ data/match_metadata/
 
 # Precomputed models
 models/*.pkl
+models/*.json
+!models/metadata.json
+
+# Logs
+*.log
+
+# Local notes
+PRD.md
+PROMPT.md
+
+# Ralph Wiggum scratch
+ralph.sh
+ralph*wiggum*
 
 # Python
 __pycache__/
@@ -31,6 +44,7 @@ venv/
 ENV/
 env/
 .venv/
+.venv-*/
 
 # IDE
 .idea/
@@ -38,9 +52,9 @@ env/
 *.swp
 *.swo
 
-# Streamlit
-.streamlit/secrets.toml
-
 # OS
 .DS_Store
 Thumbs.db
+
+# Rust
+rust-server/target/

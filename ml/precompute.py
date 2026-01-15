@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """
 Pre-compute ML models for each hero.
-Saves models to disk for fast loading in Streamlit.
+Saves models to disk for fast loading in the Rust server.
 """
 
 import argparse
+import json
 import pickle
 import sys
 import time
+from datetime import datetime, UTC
 from pathlib import Path
 
+import numpy as np
 import polars as pl
 
 # Add parent to path for imports
@@ -18,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from lib.db import get_heroes, get_hero_matches
 from ml.association import build_association_model
 from ml.markov import build_markov_model
+from ml.item_stats import compute_hero_item_stats, item_stats_to_json
 
 MODELS_DIR = Path(__file__).parent.parent / "models"
 MIN_MATCHES = 100
@@ -64,6 +68,12 @@ def precompute_hero(hero_id: int, hero_name: str, verbose: bool = True) -> dict 
     markov_model = build_markov_model(matches_df, win_weight=2.0)
     n_states = len(markov_model["item_to_idx"])
     log(f"Markov model: {n_states} states")
+
+    # Compute item statistics (win rates, pick rates)
+    log("Computing item statistics...")
+    item_stats_df = compute_hero_item_stats(hero_id)
+    log(f"Computed stats for {len(item_stats_df)} items")
+
     log("Done!")
     return {
         "hero_id": hero_id,
@@ -72,6 +82,7 @@ def precompute_hero(hero_id: int, hero_name: str, verbose: bool = True) -> dict 
         "win_count": winning_matches.height,
         "association_rules": association_rules,
         "markov_model": markov_model,
+        "item_stats": item_stats_df,
     }
 
 
@@ -90,6 +101,107 @@ def load_model(hero_id: int) -> dict | None:
         return None
     with open(path, "rb") as f:
         return pickle.load(f)
+
+
+class ModelEncoder(json.JSONEncoder):
+    """JSON encoder for numpy/pandas types."""
+
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, frozenset):
+            return list(obj)
+        return super().default(obj)
+
+
+def save_model_json(model: dict, hero_id: int, item_names: dict[int, str]) -> None:
+    """Export model to JSON for Rust consumption."""
+    MODELS_DIR.mkdir(parents=True, exist_ok=True)
+
+    markov = model["markov_model"]
+
+    # Build states list
+    states = []
+    for idx, item_id in markov["idx_to_item"].items():
+        name = "START" if item_id == -1 else item_names.get(item_id, f"Item {item_id}")
+        states.append({"idx": int(idx), "item_id": int(item_id), "name": name})
+
+    # Build sparse transitions (only non-zero probabilities)
+    transitions = []
+    matrix = markov["matrix"]
+    for i in range(matrix.shape[0]):
+        for j in range(matrix.shape[1]):
+            if matrix[i, j] > 0.001:
+                transitions.append({
+                    "from": int(i),
+                    "to": int(j),
+                    "prob": round(float(matrix[i, j]), 4),
+                })
+
+    # Transform association rules
+    rules = []
+    for _, row in model["association_rules"].iterrows():
+        rules.append({
+            "antecedents": [int(x) for x in row["antecedents"]],
+            "consequents": [int(x) for x in row["consequents"]],
+            "support": round(float(row["support"]), 4),
+            "confidence": round(float(row["confidence"]), 4),
+            "lift": round(float(row["lift"]), 4),
+        })
+
+    # Transform item stats
+    item_stats = []
+    if "item_stats" in model and model["item_stats"] is not None:
+        item_stats = item_stats_to_json(model["item_stats"])
+
+    output = {
+        "hero_id": model["hero_id"],
+        "hero_name": model["hero_name"],
+        "match_count": model["match_count"],
+        "win_count": model["win_count"],
+        "generated_at": datetime.now(UTC).isoformat(),
+        "markov": {"states": states, "transitions": transitions},
+        "association_rules": rules,
+        "item_stats": item_stats,
+    }
+
+    path = MODELS_DIR / f"{hero_id}.json"
+    with open(path, "w") as f:
+        json.dump(output, f, cls=ModelEncoder)
+
+
+def export_metadata() -> None:
+    """Export heroes and items metadata to JSON."""
+    from lib.db import get_heroes, get_items
+
+    heroes = get_heroes()
+    items = get_items()
+
+    output = {
+        "heroes": [
+            {"id": int(row["id"]), "name": row["name"]}
+            for row in heroes.sort("name").iter_rows(named=True)
+        ],
+        "items": [
+            {
+                "id": int(row["id"]),
+                "name": row["name"],
+                "slot": row.get("slot", "unknown"),
+                "tier": int(row.get("tier", 0)),
+            }
+            for row in items.iter_rows(named=True)
+        ],
+        "generated_at": datetime.now(UTC).isoformat(),
+    }
+
+    path = MODELS_DIR / "metadata.json"
+    MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(output, f, indent=2)
 
 
 def find_hero(heroes_df: pl.DataFrame, query: str) -> pl.DataFrame:
@@ -121,6 +233,10 @@ def main(args: argparse.Namespace = None) -> int:
         print(f"Error: {e}")
         print("Run scripts/fetch_data.py first to download data files.")
         return 1
+
+    # Load item names for JSON export
+    from lib.items import get_item_names_map
+    item_names = get_item_names_map()
 
     # List heroes if requested
     if args and args.list_heroes:
@@ -161,9 +277,14 @@ def main(args: argparse.Namespace = None) -> int:
             skipped += 1
         else:
             save_model(model, hero_id)
+            save_model_json(model, hero_id, item_names)
             print(f"  Saved: {model['match_count']} matches, {len(model['association_rules'])} rules")
 
         processed += 1
+
+    # Export metadata for Rust server
+    print("Exporting metadata.json...")
+    export_metadata()
 
     elapsed = time.time() - start_time
     print(f"\nDone! Processed {processed} heroes, skipped {skipped}")

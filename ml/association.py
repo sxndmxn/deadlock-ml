@@ -8,12 +8,17 @@ import pandas as pd
 import polars as pl
 import numpy as np
 
-# GPU-accelerated FP-Growth
-import cudf
-from cuml.frequent_pattern import FPGrowth
+try:
+    import cudf
+    from cuml.frequent_pattern import FPGrowth as CuFPGrowth
+    HAS_CUML = True
+except Exception:
+    cudf = None
+    CuFPGrowth = None
+    HAS_CUML = False
 
 # CPU rule generation (fast enough, cuML doesn't have this)
-from mlxtend.frequent_patterns import association_rules
+from mlxtend.frequent_patterns import association_rules, fpgrowth as mlxtend_fpgrowth
 
 
 def build_item_matrix(matches_df: pl.DataFrame) -> pd.DataFrame:
@@ -70,32 +75,34 @@ def find_frequent_itemsets(
     if matrix.empty:
         return pd.DataFrame(columns=["support", "itemsets"])
 
-    try:
-        # Convert to cuDF for GPU processing
-        gdf = cudf.DataFrame.from_pandas(matrix.astype(bool))
+    if HAS_CUML:
+        try:
+            # Convert to cuDF for GPU processing
+            gdf = cudf.DataFrame.from_pandas(matrix.astype(bool))
 
-        # Run FP-Growth on GPU
-        fp = FPGrowth(min_support=min_support)
-        fp.fit(gdf)
+            # Run FP-Growth on GPU
+            fp = CuFPGrowth(min_support=min_support)
+            fp.fit(gdf)
 
-        # Get results back as pandas
-        itemsets = fp.frequent_itemsets_.to_pandas()
+            # Get results back as pandas
+            itemsets = fp.frequent_itemsets_.to_pandas()
 
-        # cuML returns 'items' column, mlxtend expects 'itemsets'
-        if 'items' in itemsets.columns:
-            itemsets = itemsets.rename(columns={'items': 'itemsets'})
+            # cuML returns 'items' column, mlxtend expects 'itemsets'
+            if "items" in itemsets.columns:
+                itemsets = itemsets.rename(columns={"items": "itemsets"})
 
-        # Convert item indices back to frozensets of column names for mlxtend compatibility
-        col_names = matrix.columns.tolist()
-        itemsets['itemsets'] = itemsets['itemsets'].apply(
-            lambda x: frozenset(col_names[i] for i in x) if hasattr(x, '__iter__') else frozenset([col_names[x]])
-        )
+            # Convert item indices back to frozensets of column names for mlxtend compatibility
+            col_names = matrix.columns.tolist()
+            itemsets["itemsets"] = itemsets["itemsets"].apply(
+                lambda x: frozenset(col_names[i] for i in x) if hasattr(x, "__iter__") else frozenset([col_names[x]])
+            )
 
-        return itemsets
+            return itemsets
+        except Exception as e:
+            print(f"    GPU FP-Growth error: {e}")
 
-    except Exception as e:
-        print(f"    GPU FP-Growth error: {e}")
-        return pd.DataFrame(columns=["support", "itemsets"])
+    # Fallback to CPU FP-Growth (mlxtend)
+    return mlxtend_fpgrowth(matrix.astype(bool), min_support=min_support, use_colnames=True)
 
 
 def generate_rules(

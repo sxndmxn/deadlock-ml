@@ -1,0 +1,12 @@
+{% if next_items.is_empty() %}
+<p>No recommendations found for this item.</p>
+{% else %}
+<ul class="next-items">
+    {% for item in next_items %}
+    <li>
+        <strong>{{ item.name }}</strong>
+        <span class="prob">({{ "{:.1}"|format(item.prob * 100.0) }}%)</span>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
