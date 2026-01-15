@@ -1,0 +1,197 @@
+<section class="build-tab">
+    <p class="caption">Based on {{ match_count }} matches ({{ win_count }} wins)</p>
+
+    <div class="columns">
+        <div class="col-build">
+            <h2>Recommended Build</h2>
+            <ol class="build-list">
+                {% for item in build_path %}
+                <li>
+                    <strong>{{ item.name }}</strong>
+                    <span class="prob">({{ "{:.1}"|format(item.prob * 100.0) }}%)</span>
+                </li>
+                {% endfor %}
+            </ol>
+        </div>
+
+        <div class="col-tree">
+            <h2>Build Flow</h2>
+            <div id="tree-chart"></div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2>What Should I Buy Next?</h2>
+    <select id="current-item"
+            hx-get="/htmx/next-items/{{ hero_id }}/0"
+            hx-trigger="change"
+            hx-target="#next-items-result"
+            hx-swap="innerHTML"
+            hx-vals="js:{item_id: event.target.value}">
+        <option value="">(Select your last item)</option>
+        {% for item in items %}
+        <option value="{{ item.id }}">{{ item.name }}</option>
+        {% endfor %}
+    </select>
+
+    <div id="next-items-result"></div>
+</section>
+
+<script>
+(function() {
+    fetch('/htmx/tree/{{ hero_id }}')
+        .then(r => r.json())
+        .then(data => {
+            if (!data.nodes || data.nodes.length === 0) return;
+
+            // Scale factors for layout
+            const xScale = 200;  // pixels per x unit
+            const yScale = 100;  // pixels per y unit
+            const iconSize = 48; // icon size in pixels
+            const chartWidth = 900;
+            const chartPadding = 60;
+
+            // Calculate chart height based on max_y
+            const chartHeight = Math.max(400, (data.max_y * 2 + 1) * yScale + chartPadding * 2);
+            const yCenter = chartHeight / 2;
+
+            // Create edge traces (lines connecting nodes)
+            const edgeTraces = [];
+            for (const edge of data.edges) {
+                edgeTraces.push({
+                    type: 'scatter',
+                    mode: 'lines',
+                    x: [edge.x0 * xScale + chartPadding, edge.x1 * xScale + chartPadding],
+                    y: [yCenter + edge.y0 * yScale, yCenter + edge.y1 * yScale],
+                    line: {
+                        color: 'rgba(100, 140, 180, 0.5)',
+                        width: Math.max(1, edge.weight * 8)
+                    },
+                    hoverinfo: 'none',
+                    showlegend: false
+                });
+            }
+
+            // Create node trace (invisible points for hover info)
+            const nodeX = [];
+            const nodeY = [];
+            const nodeText = [];
+            const nodeHover = [];
+
+            for (const node of data.nodes) {
+                nodeX.push(node.x * xScale + chartPadding);
+                nodeY.push(yCenter + node.y * yScale);
+                nodeText.push(node.name);
+                nodeHover.push(node.id === 'start'
+                    ? 'START'
+                    : `${node.name}<br>Prob: ${(node.prob * 100).toFixed(1)}%`);
+            }
+
+            const nodeTrace = {
+                type: 'scatter',
+                mode: 'markers+text',
+                x: nodeX,
+                y: nodeY,
+                text: nodeText,
+                textposition: 'bottom center',
+                textfont: {
+                    size: 10,
+                    color: '#ddd'
+                },
+                marker: {
+                    size: 1,
+                    color: 'transparent'
+                },
+                hoverinfo: 'text',
+                hovertext: nodeHover,
+                showlegend: false
+            };
+
+            // Build layout with images
+            const images = [];
+            for (const node of data.nodes) {
+                if (node.id === 'start') continue; // Skip START node (no icon)
+
+                images.push({
+                    source: node.icon_url,
+                    xref: 'x',
+                    yref: 'y',
+                    x: node.x * xScale + chartPadding,
+                    y: yCenter + node.y * yScale,
+                    sizex: iconSize,
+                    sizey: iconSize,
+                    xanchor: 'center',
+                    yanchor: 'middle',
+                    layer: 'above'
+                });
+            }
+
+            // Add START label at position 0
+            const startNode = data.nodes.find(n => n.id === 'start');
+            if (startNode) {
+                images.push({
+                    source: 'data:image/svg+xml,' + encodeURIComponent(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48">
+                            <circle cx="24" cy="24" r="20" fill="#444" stroke="#666" stroke-width="2"/>
+                            <text x="24" y="28" text-anchor="middle" fill="#fff" font-size="10">START</text>
+                        </svg>
+                    `),
+                    xref: 'x',
+                    yref: 'y',
+                    x: 0 + chartPadding,
+                    y: yCenter,
+                    sizex: iconSize,
+                    sizey: iconSize,
+                    xanchor: 'center',
+                    yanchor: 'middle',
+                    layer: 'above'
+                });
+            }
+
+            const layout = {
+                width: chartWidth,
+                height: chartHeight,
+                margin: { t: 20, b: 40, l: 20, r: 20 },
+                xaxis: {
+                    showgrid: false,
+                    zeroline: false,
+                    showticklabels: false,
+                    range: [0, chartWidth]
+                },
+                yaxis: {
+                    showgrid: false,
+                    zeroline: false,
+                    showticklabels: false,
+                    range: [0, chartHeight]
+                },
+                images: images,
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                hovermode: 'closest'
+            };
+
+            Plotly.newPlot('tree-chart', [...edgeTraces, nodeTrace], layout, {
+                displayModeBar: false,
+                staticPlot: false
+            });
+        })
+        .catch(err => {
+            console.error('Error loading tree data:', err);
+            document.getElementById('tree-chart').innerHTML = '<p>Failed to load build tree</p>';
+        });
+
+    // Fix the item selector to use proper URL
+    const itemSelect = document.getElementById('current-item');
+    if (itemSelect) {
+        itemSelect.addEventListener('change', function() {
+            const itemId = this.value;
+            if (itemId) {
+                this.setAttribute('hx-get', `/htmx/next-items/{{ hero_id }}/${itemId}`);
+                htmx.process(this);
+                htmx.trigger(this, 'change');
+            }
+        });
+    }
+})();
+</script>

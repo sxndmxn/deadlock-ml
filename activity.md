@@ -719,6 +719,42 @@
 
 ---
 
+## Task 23 Completed - 2026-01-15
+
+### Redesign Build Optimizer with tree visualization
+
+**Changes made:**
+- Added `TreeNode`, `TreeEdge`, `TreeData` structs to `markov.rs`:
+  - `TreeNode`: id, item_id, name, prob, x, y, icon_url
+  - `TreeEdge`: source, target, weight, x0, y0, x1, y1
+  - `TreeData`: nodes, edges, max_y
+- Implemented `build_tree_data()` function:
+  - Generates 3-level deep tree (START -> Level 1 -> Level 2 -> Level 3)
+  - Top 5 items per branch at each level
+  - Horizontal layout (left to right) with proper Y spacing
+  - Icon URLs from deadlock-api CDN
+- Added `tree_data` handler to `handlers.rs`:
+  - Returns JSON with tree structure for Plotly visualization
+  - Builds item icon map from markov states
+- Added route `/htmx/tree/{hero_id}` to `main.rs`
+- Replaced Sankey diagram in `build_path.html` with tree visualization:
+  - Plotly scatter plot with `layout.images` for item icons
+  - Edge traces connecting nodes with line width based on probability
+  - START node rendered as SVG circle
+  - Horizontal left-to-right layout
+  - Hover info showing item name and probability
+- Verified compilation with `cargo check` - passed
+- Verified tree endpoint returns 36 nodes and 35 edges
+- Verified build-path template renders with tree chart div
+
+**Files modified:**
+- `rust-server/src/markov.rs` (added TreeNode, TreeEdge, TreeData, build_tree_data)
+- `rust-server/src/handlers.rs` (added tree_data handler, updated imports)
+- `rust-server/src/main.rs` (added /htmx/tree/{hero_id} route)
+- `rust-server/templates/partials/build_path.html` (replaced Sankey with tree)
+
+---
+
 ## PHASE 6 IN PROGRESS
 
 Tasks 1-18 complete. Now working on Phase 6 UI Fixes:
@@ -726,7 +762,7 @@ Tasks 1-18 complete. Now working on Phase 6 UI Fixes:
 - Task 20: ✅ Fix Item Synergies tab (completed)
 - Task 21: ✅ Replace Hero Stats with table (completed)
 - Task 22: ✅ Redesign Match History to Hero Matchups (completed)
-- Task 23: ❌ Redesign Build Optimizer with tree (pending)
+- Task 23: ✅ Redesign Build Optimizer with tree (completed)
 - Task 24: ❌ End-to-end UI verification (pending)
 
 ---

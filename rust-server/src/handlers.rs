@@ -2,7 +2,7 @@
 
 use crate::{
     db::{LeaderboardQuery, LeaderboardSort},
-    markov::{build_sankey_data, find_optimal_path, get_next_probabilities, ItemRecommendation, SankeyData},
+    markov::{build_sankey_data, build_tree_data, find_optimal_path, get_next_probabilities, ItemRecommendation, SankeyData, TreeData},
     models::{AssociationRule, HeroInfo, ItemInfo},
     AppState,
 };
@@ -147,6 +147,36 @@ pub async fn sankey_data(Path(hero_id): Path<i32>, State(state): State<AppState>
     };
 
     Json(build_sankey_data(&model.markov, 5))
+}
+
+/// Returns tree visualization data for build path.
+pub async fn tree_data(Path(hero_id): Path<i32>, State(state): State<AppState>) -> impl IntoResponse {
+    let Some(model) = state.store.get_hero(hero_id) else {
+        return Json(TreeData {
+            nodes: vec![],
+            edges: vec![],
+            max_y: 0.0,
+        });
+    };
+
+    // Build item icon map from markov states
+    // The model's markov states use internal IDs (100, 101, etc.)
+    // We need to map these to icon URLs
+    let item_icon_map: std::collections::HashMap<i32, String> = model
+        .markov
+        .states
+        .iter()
+        .filter(|s| s.item_id >= 0)
+        .map(|s| {
+            (
+                s.item_id,
+                format!("https://assets.deadlock-api.com/images/items/{}.png", s.item_id),
+            )
+        })
+        .collect();
+
+    // Build tree with 5 items per level, 3 levels deep
+    Json(build_tree_data(&model.markov, 5, &item_icon_map))
 }
 
 // =============================================================================

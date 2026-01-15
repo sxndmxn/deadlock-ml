@@ -59,6 +59,7 @@ async fn main() {
         .route("/htmx/build-path/{hero_id}", get(handlers::build_path))
         .route("/htmx/next-items/{hero_id}/{item_id}", get(handlers::next_items))
         .route("/htmx/sankey/{hero_id}", get(handlers::sankey_data))
+        .route("/htmx/tree/{hero_id}", get(handlers::tree_data))
         .route("/htmx/synergies/{hero_id}", get(handlers::synergies))
         .route("/htmx/synergy-graph/{hero_id}", get(handlers::synergy_graph))
         .route("/htmx/hero-stats", get(handlers::hero_stats))

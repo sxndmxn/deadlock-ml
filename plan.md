@@ -294,7 +294,7 @@
         "Use horizontal layout (left to right) with edges as line traces",
         "Run cargo check and verify tree renders with icons"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 24,
