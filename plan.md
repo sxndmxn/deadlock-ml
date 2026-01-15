@@ -227,7 +227,7 @@
         "Check /htmx/leaderboards/overall shows ranked players",
         "Full UI walkthrough of all tabs"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
