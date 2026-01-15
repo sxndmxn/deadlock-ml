@@ -177,7 +177,7 @@
         "Add tier-aware transitions",
         "Export model and verify"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 15,

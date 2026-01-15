@@ -389,3 +389,45 @@
 - `models/counter_matrix.json`
 
 ---
+
+## Task 14 Completed - 2026-01-14
+
+### Create optimal 12-item full build model
+
+**Changes made:**
+- Created `ml/train/train_full_build.py` with full build optimizer
+- Implemented constrained beam search algorithm:
+  - Explores multiple build paths simultaneously with configurable beam width
+  - Uses XGBoost scorer when available, with fallback scoring
+- Added slot balance constraints:
+  - `SLOT_SOFT_MAX = 5` items per slot (soft limit)
+  - `SLOT_HARD_MAX = 6` items per slot (hard limit)
+  - `MIN_ITEMS_PER_SLOT = 2` minimum per slot in final build
+  - Fallback scorer includes slot balance bonus/penalty
+- Added tier-aware transitions:
+  - Early game (items 0-1): Tier 1-2 allowed
+  - Mid game (items 2-4): Tier 1-3 allowed
+  - Late game (items 5-8): Tier 2-4 allowed
+  - End game (items 9-11): Tier 3-4 only
+- Implemented item synergy scoring:
+  - Computes log odds ratio co-occurrence for item pairs
+  - Rewards items that frequently appear together in winning builds
+- Implemented per-hero item win rate computation
+- JSON export format includes:
+  - Item metadata (id, name, tier, slot, cost)
+  - Synergy scores between item pairs
+  - Per-item win rates
+  - Precomputed optimal builds (5 variants)
+  - Optional XGBoost scorer model
+- Verified with test runs producing balanced builds (W=2, V=4, S=6)
+
+**Model architecture:**
+- Input: Winning builds from match history
+- Processing: Beam search with slot/tier constraints
+- Output: 12-item builds optimized for win rate and synergy
+
+**Files created:**
+- `ml/train/train_full_build.py`
+- `models/full_build_6.json` (test output)
+
+---
