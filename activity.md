@@ -472,3 +472,28 @@
 - `rust-server/src/main.rs` (added mod declaration)
 
 ---
+
+## Task 16 Completed - 2026-01-14
+
+### Add navigation tabs to index.html
+
+**Changes made:**
+- Added Match History tab with `hx-get="/htmx/matches"` to navigation
+- Added Leaderboards tab with `hx-get="/htmx/leaderboards/overall"` to navigation
+- Added visual tab divider (`<span class="tab-divider">`) to separate hero-specific tabs from global tabs
+- Added `data-hero-specific` attribute to distinguish hero-specific tabs from global tabs
+- Updated JavaScript to only update URLs for hero-specific tabs when hero selection changes
+- Updated JavaScript to only auto-reload content on hero change if active tab is hero-specific
+- Added `.tab-divider` CSS styling for visual separation
+- Verified compilation with `cargo check` - passed
+- Tested endpoints - both `/htmx/matches` and `/htmx/leaderboards/overall` render correctly
+
+**Tab structure:**
+- Hero-specific tabs (update on hero change): Build Optimizer, Item Synergies, Hero Stats, All Items
+- Global tabs (no hero dependency): Match History, Leaderboards
+
+**Files modified:**
+- `rust-server/templates/index.html` (added tabs, updated JavaScript)
+- `rust-server/static/css/styles.css` (added tab-divider style)
+
+---

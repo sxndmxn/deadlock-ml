@@ -202,7 +202,7 @@
         "Ensure tab switching works with HTMX",
         "Verify navigation works"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 17,

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="top-bar">
+    <h1>Deadlock Build Optimizer</h1>
+    <div class="hero-select-wrapper">
+        <img id="hero-icon" src="" alt="" class="hero-icon">
+        <select id="hero-select">
+            {% for hero in heroes %}
+            <option value="{{ hero.id }}" data-icon="{{ hero.icon_url }}" {% if hero.id == selected_hero_id %}selected{% endif %}>
+                {{ hero.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+</header>
+
+<nav class="tabs">
+    <button class="tab active" data-tab="build" data-hero-specific="true"
+            hx-get="/htmx/build-path/{{ selected_hero_id }}"
+            hx-target="#tab-content"
+            hx-swap="innerHTML">Build Optimizer</button>
+    <button class="tab" data-tab="synergies" data-hero-specific="true"
+            hx-get="/htmx/synergies/{{ selected_hero_id }}"
+            hx-target="#tab-content"
+            hx-swap="innerHTML">Item Synergies</button>
+    <button class="tab" data-tab="stats" data-hero-specific="true"
+            hx-get="/htmx/hero-stats?hero_id={{ selected_hero_id }}"
+            hx-target="#tab-content"
+            hx-swap="innerHTML">Hero Stats</button>
+    <button class="tab" data-tab="items" data-hero-specific="true"
+            hx-get="/htmx/all-items/{{ selected_hero_id }}"
+            hx-target="#tab-content"
+            hx-swap="innerHTML">All Items</button>
+    <span class="tab-divider"></span>
+    <button class="tab" data-tab="matches" data-hero-specific="false"
+            hx-get="/htmx/matches"
+            hx-target="#tab-content"
+            hx-swap="innerHTML">Match History</button>
+    <button class="tab" data-tab="leaderboards" data-hero-specific="false"
+            hx-get="/htmx/leaderboards/overall"
+            hx-target="#tab-content"
+            hx-swap="innerHTML">Leaderboards</button>
+</nav>
+
+<main id="tab-content"
+      hx-get="/htmx/build-path/{{ selected_hero_id }}"
+      hx-trigger="load"
+      hx-swap="innerHTML">
+    <p class="loading">Loading...</p>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const heroSelect = document.getElementById('hero-select');
+    const heroIcon = document.getElementById('hero-icon');
+    const tabs = document.querySelectorAll('.tab');
+
+    // Set initial hero icon
+    const selectedOption = heroSelect.options[heroSelect.selectedIndex];
+    if (selectedOption && selectedOption.dataset.icon) {
+        heroIcon.src = selectedOption.dataset.icon;
+    }
+
+    // Tab switching
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // Hero selection change
+    heroSelect.addEventListener('change', function() {
+        const heroId = this.value;
+        const selectedOption = this.options[this.selectedIndex];
+        const iconUrl = selectedOption.dataset.icon;
+
+        // Update hero icon
+        if (heroIcon && iconUrl) {
+            heroIcon.src = iconUrl;
+        }
+
+        const activeTab = document.querySelector('.tab.active');
+
+        // Update hero-specific tab URLs with new hero
+        tabs.forEach(tab => {
+            // Only update URLs for hero-specific tabs
+            if (tab.dataset.heroSpecific !== 'true') return;
+
+            let newUrl;
+            if (tab.dataset.tab === 'build') {
+                newUrl = `/htmx/build-path/${heroId}`;
+            } else if (tab.dataset.tab === 'synergies') {
+                newUrl = `/htmx/synergies/${heroId}`;
+            } else if (tab.dataset.tab === 'stats') {
+                newUrl = `/htmx/hero-stats?hero_id=${heroId}`;
+            } else if (tab.dataset.tab === 'items') {
+                newUrl = `/htmx/all-items/${heroId}`;
+            }
+            if (newUrl) {
+                tab.setAttribute('hx-get', newUrl);
+                htmx.process(tab);
+            }
+        });
+
+        // Trigger click on active tab to reload content (only if hero-specific)
+        if (activeTab?.dataset.heroSpecific === 'true') {
+            activeTab.click();
+        }
+    });
+});
+</script>
+{% endblock %}
