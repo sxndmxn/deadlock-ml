@@ -75,6 +75,7 @@ pub struct HeroStat {
     pub match_count: u64,
     pub win_count: u64,
     pub win_rate: f64,
+    pub pick_rate: f64,
 }
 
 // =============================================================================
@@ -338,26 +339,43 @@ pub async fn hero_stats(
     let metadata = state.store.get_metadata();
     let hero_info = metadata.map(|m| m.heroes).unwrap_or_default();
 
-    let mut heroes: Vec<HeroStat> = hero_info
+    // First pass: collect hero data and compute total matches
+    let hero_data: Vec<_> = hero_info
         .iter()
         .filter_map(|info| {
             let model = state.store.get_hero(info.id)?;
-            let win_rate = if model.match_count > 0 {
-                model.win_count as f64 / model.match_count as f64
-            } else {
-                0.0
-            };
-            Some(HeroStat {
-                id: info.id,
-                name: info.name.clone(),
-                match_count: model.match_count,
-                win_count: model.win_count,
-                win_rate,
-            })
+            Some((info.id, info.name.clone(), model.match_count, model.win_count))
         })
         .collect();
 
-    heroes.sort_by(|a, b| a.win_rate.partial_cmp(&b.win_rate).unwrap_or(std::cmp::Ordering::Equal));
+    let total_matches: u64 = hero_data.iter().map(|(_, _, matches, _)| *matches).sum();
+
+    // Second pass: build HeroStat with pick_rate
+    let mut heroes: Vec<HeroStat> = hero_data
+        .into_iter()
+        .map(|(id, name, match_count, win_count)| {
+            let win_rate = if match_count > 0 {
+                win_count as f64 / match_count as f64
+            } else {
+                0.0
+            };
+            let pick_rate = if total_matches > 0 {
+                match_count as f64 / total_matches as f64
+            } else {
+                0.0
+            };
+            HeroStat {
+                id,
+                name,
+                match_count,
+                win_count,
+                win_rate,
+                pick_rate,
+            }
+        })
+        .collect();
+
+    heroes.sort_by(|a, b| b.win_rate.partial_cmp(&a.win_rate).unwrap_or(std::cmp::Ordering::Equal));
 
     let selected_hero_id = params.hero_id.unwrap_or_else(|| heroes.first().map(|h| h.id).unwrap_or(1));
 

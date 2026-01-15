@@ -266,7 +266,7 @@
         "Add sortable column JavaScript similar to all_items.html",
         "Run cargo check and verify table renders"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 22,

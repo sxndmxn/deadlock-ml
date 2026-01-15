@@ -407,6 +407,76 @@ hr {
     padding: 2rem;
 }
 
+/* ===== Hero Stats Table ===== */
+.hero-stats-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.hero-stats-table th,
+.hero-stats-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #2d3139;
+}
+
+.hero-stats-table th {
+    background: #1a1d24;
+    font-weight: 600;
+    color: #9ca3af;
+    position: sticky;
+    top: 0;
+}
+
+.hero-stats-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.hero-stats-table th.sortable:hover {
+    color: #fafafa;
+}
+
+.hero-stats-table th.sortable::after {
+    content: '';
+    margin-left: 0.5rem;
+    opacity: 0.3;
+}
+
+.hero-stats-table th.sorted-asc::after {
+    content: '▲';
+    opacity: 1;
+}
+
+.hero-stats-table th.sorted-desc::after {
+    content: '▼';
+    opacity: 1;
+}
+
+.hero-stats-table tbody tr:hover {
+    background: #1a1d24;
+}
+
+.hero-stats-table tbody tr.selected-hero {
+    background: rgba(59, 130, 246, 0.15);
+    border-left: 3px solid #3b82f6;
+}
+
+.col-hero {
+    font-weight: 500;
+}
+
+.col-wins {
+    color: #22c55e;
+    font-variant-numeric: tabular-nums;
+}
+
+.no-heroes {
+    color: #9ca3af;
+    text-align: center;
+    padding: 2rem;
+}
+
 /* ===== Match History Styles ===== */
 .match-list-tab h2 {
     margin-bottom: 1rem;

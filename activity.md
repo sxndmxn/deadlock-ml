@@ -642,12 +642,43 @@
 
 ---
 
+## Task 21 Completed - 2026-01-15
+
+### Replace Hero Stats with simple HTMX table
+
+**Changes made:**
+- Added `pick_rate: f64` field to `HeroStat` struct in handlers.rs
+- Updated `hero_stats` handler to:
+  - First pass: collect hero data and calculate total matches across all heroes
+  - Second pass: build HeroStat with pick_rate = hero_matches / total_matches
+  - Changed sort to descending by win_rate (highest first)
+- Replaced Plotly.js bar chart in hero_stats.html with sortable table:
+  - Columns: Hero | Win Rate | Total Matches | Total Wins | Pick Rate
+  - Sortable columns with ascending/descending toggle (like all_items.html)
+  - Selected hero row highlighted with blue background and left border
+  - Win rates below 50% shown in red (`.negative` class)
+  - Numbers formatted with thousands separators via JavaScript
+- Added CSS styles for `.hero-stats-table` in styles.css:
+  - Table styling matching items table
+  - Sortable column headers with arrow indicators
+  - `.selected-hero` row highlighting
+  - `.col-hero`, `.col-wins`, `.no-heroes` styles
+- Verified compilation with `cargo check` - passed
+- Verified endpoint renders table correctly via curl
+
+**Files modified:**
+- `rust-server/src/handlers.rs` (HeroStat struct, hero_stats handler)
+- `rust-server/templates/partials/hero_stats.html` (replaced Plotly with table)
+- `rust-server/static/css/styles.css` (added hero stats table styles)
+
+---
+
 ## PHASE 6 IN PROGRESS
 
 Tasks 1-18 complete. Now working on Phase 6 UI Fixes:
 - Task 19: ✅ Fix All Items tab (completed)
 - Task 20: ✅ Fix Item Synergies tab (completed)
-- Task 21: ❌ Replace Hero Stats with table (pending)
+- Task 21: ✅ Replace Hero Stats with table (completed)
 - Task 22: ❌ Redesign Match History to Hero Matchups (pending)
 - Task 23: ❌ Redesign Build Optimizer with tree (pending)
 - Task 24: ❌ End-to-end UI verification (pending)
