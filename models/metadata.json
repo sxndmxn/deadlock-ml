@@ -1,0 +1,1329 @@
+{
+  "heroes": [
+    {
+      "id": 6,
+      "name": "Abrams",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_sm.png"
+    },
+    {
+      "id": 15,
+      "name": "Bebop",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_sm.png"
+    },
+    {
+      "id": 72,
+      "name": "Billy",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_sm.png"
+    },
+    {
+      "id": 68,
+      "name": "Boho",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_sm.png"
+    },
+    {
+      "id": 56,
+      "name": "Bomber",
+      "icon_url": ""
+    },
+    {
+      "id": 54,
+      "name": "Cadence",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/cadence_sm.png"
+    },
+    {
+      "id": 16,
+      "name": "Calico",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_sm.png"
+    },
+    {
+      "id": 64,
+      "name": "Drifter",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_sm.png"
+    },
+    {
+      "id": 73,
+      "name": "Druid",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/druid_sm.png"
+    },
+    {
+      "id": 11,
+      "name": "Dynamo",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_sm.png"
+    },
+    {
+      "id": 53,
+      "name": "Fathom",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/slork_sm.png"
+    },
+    {
+      "id": 75,
+      "name": "Fortuna",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fortuna_sm.png"
+    },
+    {
+      "id": 74,
+      "name": "Graf",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/graf_sm.png"
+    },
+    {
+      "id": 17,
+      "name": "Grey Talon",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_sm.png"
+    },
+    {
+      "id": 38,
+      "name": "Gunslinger",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gunslinger_sm.png"
+    },
+    {
+      "id": 13,
+      "name": "Haze",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_sm.png"
+    },
+    {
+      "id": 14,
+      "name": "Holliday",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_sm.png"
+    },
+    {
+      "id": 1,
+      "name": "Infernus",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_sm.png"
+    },
+    {
+      "id": 20,
+      "name": "Ivy",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_sm.png"
+    },
+    {
+      "id": 21,
+      "name": "Kali",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_sm.png"
+    },
+    {
+      "id": 12,
+      "name": "Kelvin",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_sm.png"
+    },
+    {
+      "id": 4,
+      "name": "Lady Geist",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_sm.png"
+    },
+    {
+      "id": 31,
+      "name": "Lash",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_sm.png"
+    },
+    {
+      "id": 8,
+      "name": "McGinnis",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_sm.png"
+    },
+    {
+      "id": 63,
+      "name": "Mina",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_sm.png"
+    },
+    {
+      "id": 52,
+      "name": "Mirage",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_sm.png"
+    },
+    {
+      "id": 18,
+      "name": "Mo & Krill",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_sm.png"
+    },
+    {
+      "id": 67,
+      "name": "Paige",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_sm.png"
+    },
+    {
+      "id": 10,
+      "name": "Paradox",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_sm.png"
+    },
+    {
+      "id": 50,
+      "name": "Pocket",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_sm.png"
+    },
+    {
+      "id": 62,
+      "name": "Raven",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/operative_sm.png"
+    },
+    {
+      "id": 49,
+      "name": "Rutger",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/rutger_sm.png"
+    },
+    {
+      "id": 2,
+      "name": "Seven",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_sm.png"
+    },
+    {
+      "id": 57,
+      "name": "Shield Guy",
+      "icon_url": ""
+    },
+    {
+      "id": 19,
+      "name": "Shiv",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_sm.png"
+    },
+    {
+      "id": 60,
+      "name": "Sinclair",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_sm.png"
+    },
+    {
+      "id": 70,
+      "name": "Skyrunner",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/skyrunner_sm.png"
+    },
+    {
+      "id": 71,
+      "name": "Swan",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/swan_sm.png"
+    },
+    {
+      "id": 39,
+      "name": "The Boss",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yakuza_sm.png"
+    },
+    {
+      "id": 69,
+      "name": "The Doorman",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_sm.png"
+    },
+    {
+      "id": 51,
+      "name": "Thumper",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/thumper_sm.png"
+    },
+    {
+      "id": 47,
+      "name": "Tokamak",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tokamak_sm.png"
+    },
+    {
+      "id": 61,
+      "name": "Trapper",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/trapper_sm.png"
+    },
+    {
+      "id": 59,
+      "name": "Vandal",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vandal_sm.png"
+    },
+    {
+      "id": 65,
+      "name": "Venator",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_sm.png"
+    },
+    {
+      "id": 66,
+      "name": "Victor",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_sm.png"
+    },
+    {
+      "id": 3,
+      "name": "Vindicta",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_sm.png"
+    },
+    {
+      "id": 35,
+      "name": "Viscous",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_sm.png"
+    },
+    {
+      "id": 58,
+      "name": "Vyper",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_sm.png"
+    },
+    {
+      "id": 25,
+      "name": "Warden",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_sm.png"
+    },
+    {
+      "id": 7,
+      "name": "Wraith",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_sm.png"
+    },
+    {
+      "id": 48,
+      "name": "Wrecker",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wrecker_sm.png"
+    },
+    {
+      "id": 27,
+      "name": "Yamato",
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_sm.png"
+    }
+  ],
+  "items": [
+    {
+      "id": 1548066885,
+      "name": "Extended Magazine",
+      "slot": "weapon",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/basic_magazine_sm.png"
+    },
+    {
+      "id": 1009965641,
+      "name": "Monster Rounds",
+      "slot": "weapon",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/monster_rounds_sm.png"
+    },
+    {
+      "id": 709540378,
+      "name": "Cultist Sacrifice",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/cultist_sacrifice_sm.png"
+    },
+    {
+      "id": 811521119,
+      "name": "Tesla Bullets",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/tesla_bullets_sm.png"
+    },
+    {
+      "id": 710436191,
+      "name": "Capacitor",
+      "slot": "weapon",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/capacitor_sm.png"
+    },
+    {
+      "id": 2678489038,
+      "name": "Hollow Point",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/hollow_point_sm.png"
+    },
+    {
+      "id": 2064029594,
+      "name": "Opening Rounds",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/opening_rounds_sm.png"
+    },
+    {
+      "id": 3077079169,
+      "name": "High-Velocity Rounds",
+      "slot": "weapon",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/high_velocity_rounds_sm.png"
+    },
+    {
+      "id": 1437614329,
+      "name": "Melee Lifesteal",
+      "slot": "vitality",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/melee_lifesteal_sm.png"
+    },
+    {
+      "id": 4204808176,
+      "name": "Rebuttal",
+      "slot": "vitality",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/rebuttal_sm.png"
+    },
+    {
+      "id": 1414025773,
+      "name": "Counterspell",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/counterspell_sm.png"
+    },
+    {
+      "id": 3791587546,
+      "name": "Weighted Shots",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/weighted_shots_sm.png"
+    },
+    {
+      "id": 1342610602,
+      "name": "Close Quarters",
+      "slot": "weapon",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/close_quarters_sm.png"
+    },
+    {
+      "id": 3331811235,
+      "name": "Long Range",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/long_range_sm.png"
+    },
+    {
+      "id": 393974127,
+      "name": "Slowing Bullets",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/slowing_bullets_sm.png"
+    },
+    {
+      "id": 2037039379,
+      "name": "Inhibitor",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/inhibitor_sm.png"
+    },
+    {
+      "id": 1144549437,
+      "name": "Spirit Shredder Bullets",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spirit_shredder_bullets_sm.png"
+    },
+    {
+      "id": 2108215830,
+      "name": "Heroic Aura",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/heroic_aura_sm.png"
+    },
+    {
+      "id": 619484391,
+      "name": "Silence Wave",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/silence_glyph_sm.png"
+    },
+    {
+      "id": 1113837674,
+      "name": "Silencer",
+      "slot": "weapon",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/silencer_sm.png"
+    },
+    {
+      "id": 1414319208,
+      "name": "Berserker",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/berserker_sm.png"
+    },
+    {
+      "id": 339443430,
+      "name": "Frenzy",
+      "slot": "weapon",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/frenzy_sm.png"
+    },
+    {
+      "id": 1282141666,
+      "name": "Siphon Bullets",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/siphon_bullets_sm.png"
+    },
+    {
+      "id": 2010028405,
+      "name": "Headshot Booster",
+      "slot": "weapon",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/headshot_booster_sm.png"
+    },
+    {
+      "id": 1770441818,
+      "name": "Weakening Headshot",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/weakening_headshot_sm.png"
+    },
+    {
+      "id": 2152872419,
+      "name": "Sharpshooter",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/sharp_shooter_sm.png"
+    },
+    {
+      "id": 4053935515,
+      "name": "Headhunter",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/headhunter_sm.png"
+    },
+    {
+      "id": 4075861416,
+      "name": "Spirit Rend",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spellslinger_headshots_sm.png"
+    },
+    {
+      "id": 3884003354,
+      "name": "Crippling Headshot",
+      "slot": "weapon",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/crippling_headshot_sm.png"
+    },
+    {
+      "id": 395867183,
+      "name": "Mystic Shot",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/mystic_shot_sm.png"
+    },
+    {
+      "id": 1396247347,
+      "name": "Lucky Shot",
+      "slot": "weapon",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/lucky_shot_sm.png"
+    },
+    {
+      "id": 2095565695,
+      "name": "Point Blank",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/point_blank_sm.png"
+    },
+    {
+      "id": 3696726732,
+      "name": "Toxic Bullets",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/toxic_bullets_sm.png"
+    },
+    {
+      "id": 2480592370,
+      "name": "Ricochet",
+      "slot": "weapon",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/ricochet_sm.png"
+    },
+    {
+      "id": 3633614685,
+      "name": "Extra Health",
+      "slot": "vitality",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/extra_health_sm.png"
+    },
+    {
+      "id": 499683006,
+      "name": "Bullet Lifesteal",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/bullet_lifesteal_sm.png"
+    },
+    {
+      "id": 1047818222,
+      "name": "Debuff Reducer",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/debuff_reducer_sm.png"
+    },
+    {
+      "id": 3731635960,
+      "name": "Debuff Remover",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/debuff_remover_sm.png"
+    },
+    {
+      "id": 2163598980,
+      "name": "Spirit Resilience",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/spirit_resilience_sm.png"
+    },
+    {
+      "id": 3140772621,
+      "name": "Bullet Resilience",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/bullet_resilience_sm.png"
+    },
+    {
+      "id": 1378931225,
+      "name": "Metal Skin",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/metal_skin_sm.png"
+    },
+    {
+      "id": 2566692615,
+      "name": "Healing Booster",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healing_booster_sm.png"
+    },
+    {
+      "id": 3585132399,
+      "name": "Fortitude",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/fortitude_sm.png"
+    },
+    {
+      "id": 865846625,
+      "name": "Leech",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/leech_sm.png"
+    },
+    {
+      "id": 3399065363,
+      "name": "Sprint Boots",
+      "slot": "vitality",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/sprint_boots_sm.png"
+    },
+    {
+      "id": 3074274290,
+      "name": "Trophy Collector",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/trophy_collector_sm.png"
+    },
+    {
+      "id": 2447176615,
+      "name": "Enduring Speed",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/enduring_speed_sm.png"
+    },
+    {
+      "id": 334300056,
+      "name": "Stamina Mastery",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/stamina_mastery_sm.png"
+    },
+    {
+      "id": 668299740,
+      "name": "Rapid Rounds",
+      "slot": "weapon",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/rapid_rounds_sm.png"
+    },
+    {
+      "id": 4139877411,
+      "name": "Extra Stamina",
+      "slot": "vitality",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/extra_stamina_sm.png"
+    },
+    {
+      "id": 2481177645,
+      "name": "Hunter's Aura",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/hunters_aura_sm.png"
+    },
+    {
+      "id": 805079544,
+      "name": "Weapon Shielding",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/weapon_shielding_sm.png"
+    },
+    {
+      "id": 112198670,
+      "name": "Spirit Shielding",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/spirit_shielding_sm.png"
+    },
+    {
+      "id": 1235347618,
+      "name": "Battle Vest",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/battle_vest_sm.png"
+    },
+    {
+      "id": 3970837787,
+      "name": "Enchanter's Emblem",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/enchanters_emblem_sm.png"
+    },
+    {
+      "id": 968099481,
+      "name": "Extra Spirit",
+      "slot": "spirit",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/extra_spirit_sm.png"
+    },
+    {
+      "id": 1439347412,
+      "name": "Mystic Regeneration",
+      "slot": "spirit",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_regen_sm.png"
+    },
+    {
+      "id": 7409189,
+      "name": "Improved Spirit",
+      "slot": "spirit",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/improved_spirit_sm.png"
+    },
+    {
+      "id": 2226497419,
+      "name": "Spiritual Overflow",
+      "slot": "weapon",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spiritual_overflow_sm.png"
+    },
+    {
+      "id": 3361075077,
+      "name": "Return Fire",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/return_fire_sm.png"
+    },
+    {
+      "id": 1193964439,
+      "name": "Greater Expansion",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/greater_expansion_sm.png"
+    },
+    {
+      "id": 754480263,
+      "name": "Mystic Expansion",
+      "slot": "spirit",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_reach_sm.png"
+    },
+    {
+      "id": 3776945997,
+      "name": "Extra Charge",
+      "slot": "spirit",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/extra_charge_sm.png"
+    },
+    {
+      "id": 876563814,
+      "name": "Spirit Lifesteal",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/spirit_lifesteal_sm.png"
+    },
+    {
+      "id": 2971868509,
+      "name": "Bullet Resist Shredder",
+      "slot": "spirit",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/bullet_resist_shredder_sm.png"
+    },
+    {
+      "id": 869090587,
+      "name": "Mystic Reverb",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_reverb_sm.png"
+    },
+    {
+      "id": 1998374645,
+      "name": "Mystic Burst",
+      "slot": "spirit",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_burst_sm.png"
+    },
+    {
+      "id": 2121044373,
+      "name": "Tankbuster",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/tankbuster_sm.png"
+    },
+    {
+      "id": 2081037738,
+      "name": "Mystic Vulnerability",
+      "slot": "spirit",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_vulnerability_sm.png"
+    },
+    {
+      "id": 2603935618,
+      "name": "Healbane",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healbane_sm.png"
+    },
+    {
+      "id": 1102081447,
+      "name": "Mystic Slow",
+      "slot": "spirit",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_slow_sm.png"
+    },
+    {
+      "id": 3005970438,
+      "name": "Escalating Exposure",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/escalating_exposure_sm.png"
+    },
+    {
+      "id": 787198704,
+      "name": "Rapid Recharge",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/rapid_recharge_sm.png"
+    },
+    {
+      "id": 380806748,
+      "name": "Compress Cooldown",
+      "slot": "spirit",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/improved_cooldown_sm.png"
+    },
+    {
+      "id": 3261353684,
+      "name": "Superior Cooldown",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/superior_cooldown_sm.png"
+    },
+    {
+      "id": 915014646,
+      "name": "Transcendent Cooldown",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/transcendent_cooldown_sm.png"
+    },
+    {
+      "id": 1813726886,
+      "name": "Slowing Hex",
+      "slot": "spirit",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/slowing_hex_sm.png"
+    },
+    {
+      "id": 1219329868,
+      "name": "Spirit Sap",
+      "slot": "spirit",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_sap_sm.png"
+    },
+    {
+      "id": 2142980412,
+      "name": "Focus Lens",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/focus_lens_sm.png"
+    },
+    {
+      "id": 2922054143,
+      "name": "Rusted Barrel",
+      "slot": "spirit",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/rusted_barrel_sm.png"
+    },
+    {
+      "id": 2061878743,
+      "name": "Disarming Hex",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/disarming_hex_sm.png"
+    },
+    {
+      "id": 1804594021,
+      "name": "Rescue Beam",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/rescue_beam_sm.png"
+    },
+    {
+      "id": 3144988365,
+      "name": "Decay",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/decay_sm.png"
+    },
+    {
+      "id": 2417568017,
+      "name": "Scourge",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/scourge_sm.png"
+    },
+    {
+      "id": 1254091416,
+      "name": "Knockdown",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/knockdown_sm.png"
+    },
+    {
+      "id": 1371725689,
+      "name": "Phantom Strike",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/phantom_strike_sm.png"
+    },
+    {
+      "id": 3270001687,
+      "name": "Warp Stone",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/warp_stone_sm.png"
+    },
+    {
+      "id": 1152158042,
+      "name": "Vortex Web",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/vortex_web_sm.png"
+    },
+    {
+      "id": 677738769,
+      "name": "Refresher",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/refresher_sm.png"
+    },
+    {
+      "id": 630839635,
+      "name": "Echo Shard",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/echo_shard_sm.png"
+    },
+    {
+      "id": 395944548,
+      "name": "Torment Pulse",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/torment_pulse_sm.png"
+    },
+    {
+      "id": 3361811174,
+      "name": "Cheat Death",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/cheat_death_sm.png"
+    },
+    {
+      "id": 1798666702,
+      "name": "Shadow Weave",
+      "slot": "weapon",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/shadow_weave_sm.png"
+    },
+    {
+      "id": 600033864,
+      "name": "Majestic Leap",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/majestic_leap_sm.png"
+    },
+    {
+      "id": 2956256701,
+      "name": "Healing Nova",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healing_nova_sm.png"
+    },
+    {
+      "id": 2059712766,
+      "name": "Restorative Locket",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/restorative_locket_sm.png"
+    },
+    {
+      "id": 1710079648,
+      "name": "Healing Rite",
+      "slot": "vitality",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healing_rite_sm.png"
+    },
+    {
+      "id": 1797283378,
+      "name": "Infuser",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/infuser_sm.png"
+    },
+    {
+      "id": 857669956,
+      "name": "Guardian Ward",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/guardian_ward_sm.png"
+    },
+    {
+      "id": 1662311306,
+      "name": "Divine Barrier",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/divine_barrier_sm.png"
+    },
+    {
+      "id": 1932939246,
+      "name": "Alchemical Fire",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/alchemical_fire_sm.png"
+    },
+    {
+      "id": 989206714,
+      "name": "Blood Tribute",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/blood_tribute_sm.png"
+    },
+    {
+      "id": 3403085434,
+      "name": "Fleetfoot",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/fleetfoot_sm.png"
+    },
+    {
+      "id": 3977876567,
+      "name": "Kinetic Dash",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/kinetic_dash_sm.png"
+    },
+    {
+      "id": 1150006784,
+      "name": "Arcane Surge",
+      "slot": "spirit",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/arcane_surge_sm.png"
+    },
+    {
+      "id": 3357231760,
+      "name": "Unstoppable",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/unstoppable_sm.png"
+    },
+    {
+      "id": 2407781327,
+      "name": "Colossus",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/colossus_sm.png"
+    },
+    {
+      "id": 1976391348,
+      "name": "Cold Front",
+      "slot": "spirit",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/cold_front_sm.png"
+    },
+    {
+      "id": 3812615317,
+      "name": "Arctic Blast",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/arctic_blast_sm.png"
+    },
+    {
+      "id": 2533252781,
+      "name": "Ethereal Shift",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/ethereal_shift_sm.png"
+    },
+    {
+      "id": 2617435668,
+      "name": "Curse",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/curse_sm.png"
+    },
+    {
+      "id": 2951612397,
+      "name": "Duration Extender",
+      "slot": "spirit",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/duration_extender_sm.png"
+    },
+    {
+      "id": 2717651715,
+      "name": "Superior Duration",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/superior_duration_sm.png"
+    },
+    {
+      "id": 365620721,
+      "name": "Glass Cannon",
+      "slot": "weapon",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/glass_cannon_sm.png"
+    },
+    {
+      "id": 1409190604,
+      "name": "Fury Trance",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/fury_trance_sm.png"
+    },
+    {
+      "id": 1055679805,
+      "name": "Vampiric Burst",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/vampiric_burst_sm.png"
+    },
+    {
+      "id": 1252627263,
+      "name": "Lifestrike",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/lifestrike_sm.png"
+    },
+    {
+      "id": 465043967,
+      "name": "Spirit Strike",
+      "slot": "spirit",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_strike_sm.png"
+    },
+    {
+      "id": 3190916303,
+      "name": "Spirit Snatch",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_snatch_sm.png"
+    },
+    {
+      "id": 26002154,
+      "name": "Melee Charge",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/melee_charge_sm.png"
+    },
+    {
+      "id": 800008313,
+      "name": "Crushing Fists",
+      "slot": "weapon",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/crushing_fists_sm.png"
+    },
+    {
+      "id": 2820116164,
+      "name": "Diviner's Kevlar",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/diviners_kevlar_sm.png"
+    },
+    {
+      "id": 2947183272,
+      "name": "Radiant Regeneration",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/radiant_regeneration_sm.png"
+    },
+    {
+      "id": 2519598785,
+      "name": "Boundless Spirit",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/boundless_spirit_sm.png"
+    },
+    {
+      "id": 2739107182,
+      "name": "Burst Fire",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/burst_fire_sm.png"
+    },
+    {
+      "id": 2829638276,
+      "name": "Extra Regen",
+      "slot": "vitality",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/extra_regen_sm.png"
+    },
+    {
+      "id": 1292979587,
+      "name": "Surge of Power",
+      "slot": "spirit",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/surge_of_power_sm.png"
+    },
+    {
+      "id": 1925087134,
+      "name": "Suppressor",
+      "slot": "spirit",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/suppressor_sm.png"
+    },
+    {
+      "id": 84321454,
+      "name": "Quicksilver Reload",
+      "slot": "spirit",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/quicksilver_reload_sm.png"
+    },
+    {
+      "id": 3919289022,
+      "name": "Mercurial Magnum",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mercurial_magnum_sm.png"
+    },
+    {
+      "id": 2407033488,
+      "name": "Intensifying Magazine",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/intensifying_magazine_sm.png"
+    },
+    {
+      "id": 2463960640,
+      "name": "Escalating Resilience",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/escalating_resilience_sm.png"
+    },
+    {
+      "id": 4104549924,
+      "name": "Swift Striker",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/swift_striker_sm.png"
+    },
+    {
+      "id": 865958998,
+      "name": "Veil Walker",
+      "slot": "vitality",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/veil_walker_sm.png"
+    },
+    {
+      "id": 1644605047,
+      "name": "Reactive Barrier",
+      "slot": "vitality",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/reactive_barrier_sm.png"
+    },
+    {
+      "id": 3862866912,
+      "name": "Restorative Shot",
+      "slot": "weapon",
+      "tier": 1,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/restorative_shot_sm.png"
+    },
+    {
+      "id": 2356412290,
+      "name": "Titanic Magazine",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/titanic_magazine_sm.png"
+    },
+    {
+      "id": 3647584222,
+      "name": "Split Shot",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/split_shot_sm.png"
+    },
+    {
+      "id": 381961617,
+      "name": "Active Reload",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/active_reload_sm.png"
+    },
+    {
+      "id": 2800629741,
+      "name": "Magic Carpet",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/magic_carpet_sm.png"
+    },
+    {
+      "id": 343572757,
+      "name": "Spirit Burn",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_burn_sm.png"
+    },
+    {
+      "id": 493591231,
+      "name": "Lightning Scroll",
+      "slot": "spirit",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/lightning_scroll_sm.png"
+    },
+    {
+      "id": 3028234315,
+      "name": "Witchmail",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/witchmail_sm.png"
+    },
+    {
+      "id": 1427630806,
+      "name": "Healing Tempo",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healing_tempo_sm.png"
+    },
+    {
+      "id": 673001892,
+      "name": "Armor Piercing Rounds",
+      "slot": "weapon",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/armor_piercing_rounds_sm.png"
+    },
+    {
+      "id": 3491236900,
+      "name": "Plated Armor",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/plated_armor_sm.png"
+    },
+    {
+      "id": 1955841979,
+      "name": "Spellbreaker",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/spellbreaker_sm.png"
+    },
+    {
+      "id": 1250307611,
+      "name": "Juggernaut",
+      "slot": "vitality",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/juggernaut_sm.png"
+    },
+    {
+      "id": 2221211450,
+      "name": "Spellslinger",
+      "slot": "weapon",
+      "tier": 4,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spell_slinger_sm.png"
+    },
+    {
+      "id": 98582110,
+      "name": "Backstabber",
+      "slot": "weapon",
+      "tier": 2,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/backstabber_sm.png"
+    },
+    {
+      "id": 690458959,
+      "name": "Express Shot",
+      "slot": "weapon",
+      "tier": 3,
+      "icon_url": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/express_shot_sm.png"
+    }
+  ],
+  "generated_at": "2026-01-14T19:00:00Z"
+}

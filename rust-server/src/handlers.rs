@@ -399,12 +399,18 @@ pub async fn all_items(
         .map(|item| {
             // Look up real stats, fall back to zeros if not found
             let stats = item_stats_map.get(&item.id);
+            // Use CDN fallback for empty icon URLs
+            let icon_url = if item.icon_url.is_empty() {
+                format!("https://assets.deadlock-api.com/images/items/{}.png", item.id)
+            } else {
+                item.icon_url
+            };
             DisplayItem {
                 id: item.id,
                 name: item.name,
                 tier: item.tier,
                 slot: item.slot,
-                icon_url: item.icon_url,
+                icon_url,
                 win_rate: stats.map(|s| s.win_rate).unwrap_or(0.0),
                 pick_rate: stats.map(|s| s.pick_rate).unwrap_or(0.0),
                 match_count: stats.map(|s| s.total_matches).unwrap_or(0),

@@ -580,16 +580,47 @@
 
 ---
 
-## ALL TASKS COMPLETE
+## Task 19 Completed - 2026-01-15
 
-All 18 tasks in plan.md now have `"passes": true`.
+### Fix All Items tab - tier classification, icons, and stats
 
-**Summary of completed work:**
-- Phase 1: Data Layer (Tasks 1-2) - ItemStats struct, real item stats in handlers
-- Phase 2: Match History (Tasks 3-7) - DuckDB integration, match routes, templates
-- Phase 3: Leaderboards (Tasks 8-10) - Database queries, routes, templates
-- Phase 4: ML Models (Tasks 11-15) - Build path, win predictor, counter matrix, full build, ONNX runtime
-- Phase 5: UI Updates (Tasks 16-17) - Navigation tabs, CSS styling
-- Verification: Task 18 - End-to-end testing
+**Changes made:**
+- Updated `update_icons.py` to use correct API fields:
+  - Changed `tier` field to use `item_tier` from API (was defaulting to 1)
+  - Changed `slot` field to use `item_slot_type` from API
+  - Added `shopable` filter to only include purchasable items
+  - Changed icon URL to prefer `shop_image_small` for better quality icons
+- Regenerated `metadata.json` with correct tier distribution:
+  - Tier 1: 22 items
+  - Tier 2: 42 items
+  - Tier 3: 46 items
+  - Tier 4: 45 items
+  - Total: 151 shopable items (was 229 including non-shopable)
+- Removed Slot column from `all_items.html`:
+  - Removed header column
+  - Removed data cell
+  - Removed JavaScript sorting case for slot
+- Added CDN fallback for icon URLs in `handlers.rs`:
+  - Uses `https://assets.deadlock-api.com/images/items/{id}.png` when icon_url is empty
+- Verified compilation with `cargo check` - passed with expected warnings
+- Verified in browser - all 4 tiers rendering correctly with proper icons
+
+**Files modified:**
+- `update_icons.py` (API field fixes)
+- `models/metadata.json` (regenerated with correct tiers)
+- `rust-server/templates/partials/all_items.html` (removed Slot column)
+- `rust-server/src/handlers.rs` (added CDN fallback for icons)
+
+---
+
+## PHASE 6 IN PROGRESS
+
+Tasks 1-18 complete. Now working on Phase 6 UI Fixes:
+- Task 19: ✅ Fix All Items tab (completed)
+- Task 20: ❌ Fix Item Synergies tab (pending)
+- Task 21: ❌ Replace Hero Stats with table (pending)
+- Task 22: ❌ Redesign Match History to Hero Matchups (pending)
+- Task 23: ❌ Redesign Build Optimizer with tree (pending)
+- Task 24: ❌ End-to-end UI verification (pending)
 
 ---

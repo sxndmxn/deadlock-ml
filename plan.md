@@ -228,6 +228,88 @@
         "Full UI walkthrough of all tabs"
       ],
       "passes": true
+    },
+    {
+      "id": 19,
+      "category": "phase6",
+      "description": "Fix All Items tab - tier classification, icons, and stats",
+      "steps": [
+        "Update update_icons.py to merge tier data from data/items.parquet with icon URLs from assets API",
+        "Remove Slot column from all_items.html (header line 17, cell line 37, JS sorting)",
+        "Fix icon URLs in handlers.rs to use https://assets.deadlock-api.com/images/items/{id}.png when icon_url is empty",
+        "Verify item_stats are loaded from hero model JSON and stats columns populate",
+        "Run cargo check and verify in browser"
+      ],
+      "passes": true
+    },
+    {
+      "id": 20,
+      "category": "phase6",
+      "description": "Fix Item Synergies tab - item names and tooltips",
+      "steps": [
+        "Debug item name lookup in handlers.rs synergies() to identify missing item IDs",
+        "Ensure precompute.py association rules only include items from metadata",
+        "Add title attributes to synergy_table.html header columns (Antecedent, Consequent, Support, Confidence, Lift)",
+        "Fix synergy graph node labels to show item names instead of IDs",
+        "Run cargo check and verify tooltips appear on hover"
+      ],
+      "passes": false
+    },
+    {
+      "id": 21,
+      "category": "phase6",
+      "description": "Replace Hero Stats with simple HTMX table",
+      "steps": [
+        "Add pick_rate field to HeroStat struct in handlers.rs",
+        "Update hero_stats handler to calculate pick_rate (hero_matches / total_matches)",
+        "Replace hero_stats.html Plotly chart with table: Hero | Win Rate | Total Matches | Total Wins | Pick Rate",
+        "Add sortable column JavaScript similar to all_items.html",
+        "Run cargo check and verify table renders"
+      ],
+      "passes": false
+    },
+    {
+      "id": 22,
+      "category": "phase6",
+      "description": "Redesign Match History to Hero Matchups",
+      "steps": [
+        "Add CounterMatrix and HeroMatchup structs to models.rs",
+        "Add counter_matrix loading to store.rs from models/counter_matrix.json",
+        "Create hero_matchups handler in handlers.rs using counter_matrix data",
+        "Redesign match_list.html as matchups table: Opponent | Games | Wins | Win Rate",
+        "Add hero icons and color coding (green >52%, red <48%)",
+        "Run cargo check and verify matchups display"
+      ],
+      "passes": false
+    },
+    {
+      "id": 23,
+      "category": "phase6",
+      "description": "Redesign Build Optimizer with tree visualization",
+      "steps": [
+        "Add TreeData, TreeNode, TreeEdge structs to markov.rs",
+        "Implement build_tree_data() function (3 levels deep, top 5 items per branch)",
+        "Add tree_data handler and /htmx/tree/{hero_id} route",
+        "Replace Sankey in build_path.html with scatter plot + layout.images for item icons",
+        "Use horizontal layout (left to right) with edges as line traces",
+        "Run cargo check and verify tree renders with icons"
+      ],
+      "passes": false
+    },
+    {
+      "id": 24,
+      "category": "phase6",
+      "description": "End-to-end UI fixes verification",
+      "steps": [
+        "Run cargo run in rust-server",
+        "Verify All Items tab: correct tiers, no Slot column, color icons, populated stats",
+        "Verify Item Synergies: item names display, tooltips work",
+        "Verify Hero Stats: table renders with sortable columns",
+        "Verify Match History: hero matchups table with win rates",
+        "Verify Build Optimizer: tree with item icons",
+        "Full UI walkthrough of all tabs"
+      ],
+      "passes": false
     }
   ]
 }

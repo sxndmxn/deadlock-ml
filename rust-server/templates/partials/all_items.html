@@ -1,0 +1,145 @@
+<section class="items-tab">
+    <h2>All Items</h2>
+
+    <div class="tier-filter">
+        <button class="tier-btn active" data-tier="all">All Tiers</button>
+        <button class="tier-btn tier-1" data-tier="1">Tier 1</button>
+        <button class="tier-btn tier-2" data-tier="2">Tier 2</button>
+        <button class="tier-btn tier-3" data-tier="3">Tier 3</button>
+        <button class="tier-btn tier-4" data-tier="4">Tier 4</button>
+    </div>
+
+    <table class="items-table" id="items-table">
+        <thead>
+            <tr>
+                <th class="col-name">Item</th>
+                <th class="col-tier sortable" data-sort="tier">Tier</th>
+                <th class="col-matches sortable" data-sort="matches">Matches</th>
+                <th class="col-winrate sortable sorted-desc" data-sort="winrate">Win Rate</th>
+                <th class="col-pickrate sortable" data-sort="pickrate">Pick Rate</th>
+            </tr>
+        </thead>
+        <tbody id="items-body">
+            {% for item in items %}
+            <tr data-tier="{{ item.tier }}" data-slot="{{ item.slot }}" data-matches="{{ item.match_count }}" data-winrate="{{ item.win_rate }}" data-pickrate="{{ item.pick_rate }}">
+                <td class="col-name">
+                    <div class="item-cell">
+                        {% if item.icon_url.is_empty() %}
+                        <div class="item-icon tier-{{ item.tier }}"></div>
+                        {% else %}
+                        <img src="{{ item.icon_url }}" alt="" class="item-icon tier-{{ item.tier }}">
+                        {% endif %}
+                        <span>{{ item.name }}</span>
+                    </div>
+                </td>
+                <td class="col-tier"><span class="tier-badge tier-{{ item.tier }}">T{{ item.tier }}</span></td>
+                <td class="col-matches">{{ item.match_count }}</td>
+                <td class="col-winrate {% if item.win_rate < 0.5 %}negative{% endif %}">{{ "{:.1}"|format(item.win_rate * 100.0) }}%</td>
+                <td class="col-pickrate">{{ "{:.1}"|format(item.pick_rate * 100.0) }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if items.is_empty() %}
+    <p class="no-items">No items found.</p>
+    {% endif %}
+</section>
+
+<script>
+(function() {
+    const table = document.getElementById('items-table');
+    const tbody = document.getElementById('items-body');
+    const tierBtns = document.querySelectorAll('.tier-btn');
+    const headers = table.querySelectorAll('th.sortable');
+
+    let currentTier = 'all';
+    let currentSort = 'winrate';
+    let sortDir = 'desc';
+
+    // Format match counts with thousands separators
+    document.querySelectorAll('.col-matches').forEach(td => {
+        if (td.tagName === 'TD') {
+            const num = parseInt(td.textContent);
+            if (!isNaN(num)) {
+                td.textContent = num.toLocaleString();
+            }
+        }
+    });
+
+    // Tier filtering
+    tierBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tierBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentTier = btn.dataset.tier;
+            filterRows();
+        });
+    });
+
+    // Column sorting
+    headers.forEach(th => {
+        th.addEventListener('click', () => {
+            const sort = th.dataset.sort;
+
+            // Toggle direction if same column
+            if (currentSort === sort) {
+                sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort = sort;
+                sortDir = 'desc';
+            }
+
+            // Update header classes
+            headers.forEach(h => {
+                h.classList.remove('sorted-asc', 'sorted-desc');
+            });
+            th.classList.add(sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+
+            sortRows();
+        });
+    });
+
+    function filterRows() {
+        const rows = tbody.querySelectorAll('tr');
+        rows.forEach(row => {
+            const tier = row.dataset.tier;
+            if (currentTier === 'all' || tier === currentTier) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function sortRows() {
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        rows.sort((a, b) => {
+            let aVal, bVal;
+
+            if (currentSort === 'tier') {
+                aVal = parseInt(a.dataset.tier);
+                bVal = parseInt(b.dataset.tier);
+            } else if (currentSort === 'matches') {
+                aVal = parseInt(a.dataset.matches);
+                bVal = parseInt(b.dataset.matches);
+            } else if (currentSort === 'winrate') {
+                aVal = parseFloat(a.dataset.winrate);
+                bVal = parseFloat(b.dataset.winrate);
+            } else if (currentSort === 'pickrate') {
+                aVal = parseFloat(a.dataset.pickrate);
+                bVal = parseFloat(b.dataset.pickrate);
+            }
+
+            if (sortDir === 'asc') {
+                return aVal - bVal;
+            } else {
+                return bVal - aVal;
+            }
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+    }
+})();
+</script>
