@@ -673,13 +673,59 @@
 
 ---
 
+## Task 22 Completed - 2026-01-15
+
+### Redesign Match History to Hero Matchups
+
+**Changes made:**
+- Added `CounterMatrix` and `HeroMatchup` structs to `models.rs`:
+  - `HeroMatchup`: holds wins, games, win_rate for a hero vs opponent
+  - `CounterMatrixMetadata`: num_heroes, num_items, hero_ids, item_ids
+  - `CounterMatrix`: full counter matrix with hero_matchups HashMap
+  - Added `get_matchup()` and `get_all_matchups()` methods
+- Added counter_matrix loading to `store.rs`:
+  - Added `counter_matrix: RwLock<Option<Arc<CounterMatrix>>>` field
+  - Implemented `reload_counter_matrix()` method
+  - Added `get_counter_matrix()` getter
+  - Updated file watcher to handle counter_matrix.json
+- Replaced match list handler with hero matchups handler in `handlers.rs`:
+  - Created `HeroMatchupsTemplate` with matchups, heroes, selected_hero_id, total_games
+  - Created `DisplayMatchup` struct with opponent info and win_rate_class
+  - Handler fetches matchup data from counter_matrix and returns sorted by win rate
+  - Color coding: "matchup-good" for >52%, "matchup-bad" for <48%
+- Redesigned `match_list.html` as matchups table:
+  - Hero dropdown selector
+  - Summary showing total games
+  - Table with columns: Opponent (with hero icon), Games, Wins, Win Rate
+  - Sortable columns with JavaScript
+  - Numbers formatted with thousands separators
+- Added CSS styles in `styles.css`:
+  - `.matchups-tab`, `.matchups-filters`, `.matchups-summary` layouts
+  - `.matchups-table` with sortable headers
+  - `.opponent-cell` with hero icon and name
+  - `.matchup-good` (green) and `.matchup-bad` (red) color coding
+  - Responsive layouts for mobile
+- Renamed "Match History" tab to "Hero Matchups" in `index.html`
+- Verified compilation with `cargo check` - passed
+- Verified endpoint renders correctly via curl testing
+
+**Files modified:**
+- `rust-server/src/models.rs` (added CounterMatrix structs)
+- `rust-server/src/store.rs` (added counter_matrix loading)
+- `rust-server/src/handlers.rs` (replaced match_list with hero_matchups handler)
+- `rust-server/templates/partials/match_list.html` (redesigned as matchups table)
+- `rust-server/templates/index.html` (renamed tab)
+- `rust-server/static/css/styles.css` (added matchups styles)
+
+---
+
 ## PHASE 6 IN PROGRESS
 
 Tasks 1-18 complete. Now working on Phase 6 UI Fixes:
 - Task 19: ✅ Fix All Items tab (completed)
 - Task 20: ✅ Fix Item Synergies tab (completed)
 - Task 21: ✅ Replace Hero Stats with table (completed)
-- Task 22: ❌ Redesign Match History to Hero Matchups (pending)
+- Task 22: ✅ Redesign Match History to Hero Matchups (completed)
 - Task 23: ❌ Redesign Build Optimizer with tree (pending)
 - Task 24: ❌ End-to-end UI verification (pending)
 

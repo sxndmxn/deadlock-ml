@@ -740,6 +740,132 @@ hr {
     text-align: center;
 }
 
+/* ===== Hero Matchups Styles ===== */
+.matchups-tab h2 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.matchups-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
+.matchups-filters label {
+    color: #9ca3af;
+    font-size: 0.875rem;
+}
+
+.matchups-summary {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #2d3139;
+}
+
+.matchups-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.matchups-table th,
+.matchups-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #2d3139;
+}
+
+.matchups-table th {
+    background: #1a1d24;
+    font-weight: 600;
+    color: #9ca3af;
+    position: sticky;
+    top: 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.matchups-table th.sortable:hover {
+    background: #262a33;
+}
+
+.matchups-table th.sortable::after {
+    content: '';
+    margin-left: 0.5rem;
+}
+
+.matchups-table th.sortable.active.desc::after {
+    content: ' \u25BC';
+}
+
+.matchups-table th.sortable.active.asc::after {
+    content: ' \u25B2';
+}
+
+.matchups-table tbody tr:hover {
+    background: #1a1d24;
+}
+
+.opponent-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.opponent-cell .hero-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    object-fit: cover;
+    background: #262a33;
+}
+
+.opponent-cell .opponent-name {
+    font-weight: 500;
+}
+
+.games-cell,
+.wins-cell {
+    font-family: monospace;
+    color: #9ca3af;
+}
+
+.winrate-cell {
+    font-weight: 600;
+    font-family: monospace;
+}
+
+/* Color coding for matchup win rates */
+tr.matchup-good {
+    background: rgba(34, 197, 94, 0.08);
+}
+
+tr.matchup-good .winrate-cell {
+    color: #22c55e;
+}
+
+tr.matchup-bad {
+    background: rgba(239, 68, 68, 0.08);
+}
+
+tr.matchup-bad .winrate-cell {
+    color: #ef4444;
+}
+
+/* Neutral win rates */
+.winrate-cell:not(.matchup-good):not(.matchup-bad) {
+    color: #f59e0b;
+}
+
+.no-matchups {
+    color: #9ca3af;
+    text-align: center;
+    padding: 3rem;
+}
+
 /* ===== Responsive Layouts ===== */
 @media (max-width: 768px) {
     .top-bar {
@@ -774,17 +900,31 @@ hr {
     }
 
     .match-filters select,
-    .leaderboard-filters select {
+    .leaderboard-filters select,
+    .matchups-filters select {
         width: 100%;
     }
 
-    .leaderboard-table {
+    .matchups-filters {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .leaderboard-table,
+    .matchups-table {
         font-size: 0.875rem;
     }
 
     .leaderboard-table th,
-    .leaderboard-table td {
+    .leaderboard-table td,
+    .matchups-table th,
+    .matchups-table td {
         padding: 0.5rem;
+    }
+
+    .opponent-cell .hero-icon {
+        width: 24px;
+        height: 24px;
     }
 
     .pagination {

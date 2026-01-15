@@ -1,7 +1,7 @@
 //! Route handlers for all endpoints.
 
 use crate::{
-    db::{LeaderboardQuery, LeaderboardSort, MatchListQuery as DbMatchListQuery},
+    db::{LeaderboardQuery, LeaderboardSort},
     markov::{build_sankey_data, find_optimal_path, get_next_probabilities, ItemRecommendation, SankeyData},
     models::{AssociationRule, HeroInfo, ItemInfo},
     AppState,
@@ -463,135 +463,122 @@ pub async fn all_items(
 }
 
 // =============================================================================
-// Match History
+// Hero Matchups (replaces Match History)
 // =============================================================================
 
-/// Template for rendering match list.
+/// Template for rendering hero matchups.
 #[derive(Template)]
 #[template(path = "partials/match_list.html")]
-pub struct MatchListTemplate {
-    pub matches: Vec<DisplayMatch>,
+pub struct HeroMatchupsTemplate {
+    pub matchups: Vec<DisplayMatchup>,
     pub heroes: Vec<HeroInfo>,
-    pub total_matches: u64,
-    pub current_page: u32,
-    pub total_pages: u32,
-    pub selected_hero_id: i32,  // 0 means no selection
-    pub selected_outcome: String,  // "", "win", or "loss"
+    pub selected_hero_id: i32,
+    pub selected_hero_name: String,
+    pub total_games: u32,
 }
 
-/// Display-ready match summary for templates.
-pub struct DisplayMatch {
-    pub match_id: i64,
-    pub hero_id: i32,
-    pub hero_name: String,
-    pub account_id: i64,
-    pub won: bool,
-    pub kills: i32,
-    pub deaths: i32,
-    pub assists: i32,
-    pub net_worth: i32,
-    pub kda: String,
+/// Display-ready matchup data for templates.
+pub struct DisplayMatchup {
+    pub opponent_id: i32,
+    pub opponent_name: String,
+    pub opponent_icon_url: String,
+    pub games: u32,
+    pub wins: u32,
+    pub win_rate: f64,
+    pub win_rate_class: String,  // "matchup-good", "matchup-bad", or ""
 }
 
-const MATCHES_PER_PAGE: u32 = 20;
-
-/// Query parameters for match list filtering.
+/// Query parameters for hero matchups.
 #[derive(Deserialize)]
-pub struct MatchListQuery {
+pub struct MatchupsQuery {
     pub hero_id: Option<i32>,
-    pub account_id: Option<i64>,
-    pub outcome: Option<String>,
-    pub page: Option<u32>,
 }
 
-/// Handler for match list with filtering and pagination.
+/// Handler for hero matchups showing win rates vs each opponent.
 pub async fn match_list(
-    Query(params): Query<MatchListQuery>,
+    Query(params): Query<MatchupsQuery>,
     State(state): State<AppState>,
 ) -> impl IntoResponse {
-    let page = params.page.unwrap_or(1).max(1);
-    let offset = (page - 1) * MATCHES_PER_PAGE;
-
-    // Convert outcome string to boolean
-    let won = match params.outcome.as_deref() {
-        Some("win") => Some(true),
-        Some("loss") => Some(false),
-        _ => None,
-    };
-
-    // Build database query
-    let db_query = DbMatchListQuery {
-        hero_id: params.hero_id,
-        account_id: params.account_id,
-        won,
-        limit: MATCHES_PER_PAGE,
-        offset,
-    };
-
-    // Query database
-    let matches_result = state.db.get_match_list(&db_query);
-    let count_result = state.db.get_match_count(&db_query);
-
-    // Get hero info for name lookup
+    // Get hero list
     let metadata = state.store.get_metadata();
     let heroes = metadata.as_ref().map(|m| m.heroes.clone()).unwrap_or_default();
-    let hero_names: std::collections::HashMap<i32, String> =
-        heroes.iter().map(|h| (h.id, h.name.clone())).collect();
 
-    // Handle database errors gracefully
-    let (matches, total_matches) = match (matches_result, count_result) {
-        (Ok(m), Ok(c)) => (m, c),
-        _ => (Vec::new(), 0),
+    // Default to first hero if none selected
+    let selected_hero_id = params.hero_id.unwrap_or_else(|| heroes.first().map(|h| h.id).unwrap_or(1));
+
+    // Build hero name and icon lookup
+    let hero_info: std::collections::HashMap<i32, &HeroInfo> =
+        heroes.iter().map(|h| (h.id, h)).collect();
+
+    let selected_hero_name = hero_info
+        .get(&selected_hero_id)
+        .map(|h| h.name.clone())
+        .unwrap_or_else(|| format!("Hero {}", selected_hero_id));
+
+    // Get counter matrix
+    let counter_matrix = state.store.get_counter_matrix();
+
+    let (matchups, total_games) = if let Some(ref matrix) = counter_matrix {
+        let raw_matchups = matrix.get_all_matchups(selected_hero_id);
+        let total: u32 = raw_matchups.iter().map(|(_, m)| m.games).sum();
+
+        let display_matchups: Vec<DisplayMatchup> = raw_matchups
+            .into_iter()
+            .map(|(opponent_id, matchup)| {
+                let (opponent_name, opponent_icon_url) = hero_info
+                    .get(&opponent_id)
+                    .map(|h| (h.name.clone(), h.icon_url()))
+                    .unwrap_or_else(|| {
+                        (
+                            format!("Hero {}", opponent_id),
+                            format!("https://assets.deadlock-api.com/images/heroes/{}.png", opponent_id),
+                        )
+                    });
+
+                // Color code based on win rate: green >52%, red <48%
+                let win_rate_class = if matchup.win_rate > 0.52 {
+                    "matchup-good".to_string()
+                } else if matchup.win_rate < 0.48 {
+                    "matchup-bad".to_string()
+                } else {
+                    "".to_string()
+                };
+
+                DisplayMatchup {
+                    opponent_id,
+                    opponent_name,
+                    opponent_icon_url,
+                    games: matchup.games,
+                    wins: matchup.wins,
+                    win_rate: matchup.win_rate,
+                    win_rate_class,
+                }
+            })
+            .collect();
+
+        (display_matchups, total)
+    } else {
+        (Vec::new(), 0)
     };
 
-    // Convert to display format
-    let display_matches: Vec<DisplayMatch> = matches
-        .into_iter()
-        .map(|m| {
-            let kda = if m.deaths == 0 {
-                format!("{}/{}/{} (Perfect)", m.kills, m.deaths, m.assists)
-            } else {
-                let kda_ratio = (m.kills as f64 + m.assists as f64) / m.deaths as f64;
-                format!("{}/{}/{} ({:.2})", m.kills, m.deaths, m.assists, kda_ratio)
-            };
-            DisplayMatch {
-                match_id: m.match_id,
-                hero_id: m.hero_id,
-                hero_name: hero_names.get(&m.hero_id).cloned().unwrap_or_else(|| format!("Hero {}", m.hero_id)),
-                account_id: m.account_id,
-                won: m.won,
-                kills: m.kills,
-                deaths: m.deaths,
-                assists: m.assists,
-                net_worth: m.net_worth,
-                kda,
-            }
-        })
-        .collect();
-
-    let total_pages = ((total_matches as f64) / (MATCHES_PER_PAGE as f64)).ceil() as u32;
-
     Html(
-        MatchListTemplate {
-            matches: display_matches,
+        HeroMatchupsTemplate {
+            matchups,
             heroes,
-            total_matches,
-            current_page: page,
-            total_pages,
-            selected_hero_id: params.hero_id.unwrap_or(0),
-            selected_outcome: params.outcome.unwrap_or_default(),
+            selected_hero_id,
+            selected_hero_name,
+            total_games,
         }
         .render()
         .unwrap_or_else(|e| format!("<p>Error rendering template: {}</p>", e)),
     )
 }
 
-/// Handler for individual match details.
+/// Handler for individual match details (placeholder).
 pub async fn match_detail(
     Path(_match_id): Path<i64>,
     State(_state): State<AppState>,
 ) -> impl IntoResponse {
-    // TODO: Implement full match detail view
     Html("<div class=\"match-detail\"><p>Match details coming soon...</p></div>".to_string())
 }
 

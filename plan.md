@@ -280,7 +280,7 @@
         "Add hero icons and color coding (green >52%, red <48%)",
         "Run cargo check and verify matchups display"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 23,

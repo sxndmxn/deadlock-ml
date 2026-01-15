@@ -1,71 +1,109 @@
-<section class="match-list-tab">
-    <h2>Match History</h2>
+<section class="matchups-tab">
+    <h2>Hero Matchups</h2>
 
-    <div class="match-filters">
-        <select name="hero_id" hx-get="/htmx/matches" hx-target="#match-list-content" hx-include="[name='outcome']">
-            <option value="">All Heroes</option>
+    <div class="matchups-filters">
+        <label for="matchup-hero-select">Select Hero:</label>
+        <select id="matchup-hero-select" name="hero_id" hx-get="/htmx/matches" hx-target="#matchups-content">
             {% for hero in heroes %}
             <option value="{{ hero.id }}" {% if selected_hero_id == hero.id %}selected{% endif %}>{{ hero.name }}</option>
             {% endfor %}
         </select>
-
-        <select name="outcome" hx-get="/htmx/matches" hx-target="#match-list-content" hx-include="[name='hero_id']">
-            <option value="">All Outcomes</option>
-            <option value="win" {% if selected_outcome == "win" %}selected{% endif %}>Wins</option>
-            <option value="loss" {% if selected_outcome == "loss" %}selected{% endif %}>Losses</option>
-        </select>
     </div>
 
-    <div class="match-summary">
-        <span>{{ total_matches }} matches found</span>
-        {% if total_pages > 0 %}
-        <span>Page {{ current_page }} of {{ total_pages }}</span>
-        {% endif %}
+    <div class="matchups-summary">
+        <span>{{ selected_hero_name }}'s matchup data from {{ total_games }} games</span>
     </div>
 
-    <div id="match-list-content" class="match-cards">
-        {% if matches.is_empty() %}
-        <p class="no-matches">No matches found. Try adjusting your filters or loading data first.</p>
+    <div id="matchups-content">
+        {% if matchups.is_empty() %}
+        <p class="no-matchups">No matchup data available. Make sure counter_matrix.json is loaded.</p>
         {% else %}
-        {% for m in matches %}
-        <div class="match-card {% if m.won %}match-win{% else %}match-loss{% endif %}">
-            <div class="match-header">
-                <span class="match-id">#{{ m.match_id }}</span>
-                <span class="match-result {% if m.won %}win{% else %}loss{% endif %}">
-                    {% if m.won %}Victory{% else %}Defeat{% endif %}
-                </span>
-            </div>
-            <div class="match-hero">
-                <strong>{{ m.hero_name }}</strong>
-            </div>
-            <div class="match-stats">
-                <span class="kda">{{ m.kda }}</span>
-                <span class="net-worth">{{ m.net_worth }} souls</span>
-            </div>
-        </div>
-        {% endfor %}
+        <table class="matchups-table">
+            <thead>
+                <tr>
+                    <th class="sortable" data-sort="opponent">Opponent</th>
+                    <th class="sortable" data-sort="games">Games</th>
+                    <th class="sortable" data-sort="wins">Wins</th>
+                    <th class="sortable active desc" data-sort="winrate">Win Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in matchups %}
+                <tr class="{{ m.win_rate_class }}">
+                    <td class="opponent-cell">
+                        <img src="{{ m.opponent_icon_url }}" alt="{{ m.opponent_name }}" class="hero-icon" onerror="this.src='https://assets.deadlock-api.com/images/heroes/{{ m.opponent_id }}.png'">
+                        <span class="opponent-name">{{ m.opponent_name }}</span>
+                    </td>
+                    <td class="games-cell" data-value="{{ m.games }}">{{ m.games }}</td>
+                    <td class="wins-cell" data-value="{{ m.wins }}">{{ m.wins }}</td>
+                    <td class="winrate-cell {{ m.win_rate_class }}" data-value="{{ m.win_rate }}">
+                        {{ "{:.1}"|format(m.win_rate * 100.0) }}%
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         {% endif %}
     </div>
-
-    {% if total_pages > 1 %}
-    <div class="pagination">
-        {% if current_page > 1 %}
-        <button hx-get="/htmx/matches?page={{ current_page - 1 }}{% if selected_hero_id != 0 %}&hero_id={{ selected_hero_id }}{% endif %}{% if selected_outcome != "" %}&outcome={{ selected_outcome }}{% endif %}"
-                hx-target="#match-list-content"
-                class="page-btn">
-            Previous
-        </button>
-        {% endif %}
-
-        <span class="page-info">{{ current_page }} / {{ total_pages }}</span>
-
-        {% if current_page < total_pages %}
-        <button hx-get="/htmx/matches?page={{ current_page + 1 }}{% if selected_hero_id != 0 %}&hero_id={{ selected_hero_id }}{% endif %}{% if selected_outcome != "" %}&outcome={{ selected_outcome }}{% endif %}"
-                hx-target="#match-list-content"
-                class="page-btn">
-            Next
-        </button>
-        {% endif %}
-    </div>
-    {% endif %}
 </section>
+
+<script>
+(function() {
+    const table = document.querySelector('.matchups-table');
+    if (!table) return;
+
+    const headers = table.querySelectorAll('th.sortable');
+    const tbody = table.querySelector('tbody');
+
+    headers.forEach(header => {
+        header.addEventListener('click', () => {
+            const sortKey = header.dataset.sort;
+            const isAsc = header.classList.contains('asc');
+
+            // Remove active class from all headers
+            headers.forEach(h => h.classList.remove('active', 'asc', 'desc'));
+
+            // Set new sort direction
+            header.classList.add('active', isAsc ? 'desc' : 'asc');
+
+            // Get rows and sort
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            rows.sort((a, b) => {
+                let aVal, bVal;
+
+                if (sortKey === 'opponent') {
+                    aVal = a.querySelector('.opponent-name').textContent.toLowerCase();
+                    bVal = b.querySelector('.opponent-name').textContent.toLowerCase();
+                    return isAsc ? bVal.localeCompare(aVal) : aVal.localeCompare(bVal);
+                } else if (sortKey === 'games') {
+                    aVal = parseFloat(a.querySelector('.games-cell').dataset.value);
+                    bVal = parseFloat(b.querySelector('.games-cell').dataset.value);
+                } else if (sortKey === 'wins') {
+                    aVal = parseFloat(a.querySelector('.wins-cell').dataset.value);
+                    bVal = parseFloat(b.querySelector('.wins-cell').dataset.value);
+                } else if (sortKey === 'winrate') {
+                    aVal = parseFloat(a.querySelector('.winrate-cell').dataset.value);
+                    bVal = parseFloat(b.querySelector('.winrate-cell').dataset.value);
+                }
+
+                if (isAsc) {
+                    return aVal - bVal;
+                } else {
+                    return bVal - aVal;
+                }
+            });
+
+            // Reorder rows
+            rows.forEach(row => tbody.appendChild(row));
+        });
+    });
+
+    // Format numbers with thousands separators
+    document.querySelectorAll('.games-cell, .wins-cell').forEach(cell => {
+        const val = parseInt(cell.dataset.value);
+        if (!isNaN(val)) {
+            cell.textContent = val.toLocaleString();
+        }
+    });
+})();
+</script>
