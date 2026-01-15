@@ -214,7 +214,7 @@
         "Add responsive grid layouts",
         "Verify styling on different screen sizes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": 18,

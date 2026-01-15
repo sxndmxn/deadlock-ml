@@ -406,3 +406,331 @@ hr {
     text-align: center;
     padding: 2rem;
 }
+
+/* ===== Match History Styles ===== */
+.match-list-tab h2 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.match-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.match-summary {
+    display: flex;
+    justify-content: space-between;
+    color: #9ca3af;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #2d3139;
+}
+
+.match-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.match-card {
+    background: #1a1d24;
+    border-radius: 8px;
+    padding: 1rem;
+    border-left: 4px solid #3d4250;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.match-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.match-card.match-win {
+    border-left-color: #22c55e;
+}
+
+.match-card.match-loss {
+    border-left-color: #ef4444;
+}
+
+.match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.match-id {
+    color: #6b7280;
+    font-size: 0.8rem;
+    font-family: monospace;
+}
+
+.match-result {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.match-result.win {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+}
+
+.match-result.loss {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.match-hero {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.match-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: #9ca3af;
+}
+
+.match-stats .kda {
+    font-weight: 500;
+    color: #fafafa;
+}
+
+.match-stats .net-worth {
+    color: #f59e0b;
+}
+
+.no-matches {
+    color: #9ca3af;
+    text-align: center;
+    padding: 3rem;
+    grid-column: 1 / -1;
+}
+
+/* ===== Leaderboard Styles ===== */
+.leaderboard-tab h2 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.leaderboard-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.leaderboard-summary {
+    display: flex;
+    justify-content: space-between;
+    color: #9ca3af;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #2d3139;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #2d3139;
+}
+
+.leaderboard-table th {
+    background: #1a1d24;
+    font-weight: 600;
+    color: #9ca3af;
+    position: sticky;
+    top: 0;
+}
+
+.leaderboard-table tbody tr:hover {
+    background: #1a1d24;
+}
+
+/* Rank badges for top 3 */
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.rank-badge.gold {
+    background: linear-gradient(135deg, #ffd700, #ffb700);
+    color: #1a1d24;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+}
+
+.rank-badge.silver {
+    background: linear-gradient(135deg, #c0c0c0, #a8a8a8);
+    color: #1a1d24;
+    box-shadow: 0 2px 8px rgba(192, 192, 192, 0.4);
+}
+
+.rank-badge.bronze {
+    background: linear-gradient(135deg, #cd7f32, #b87333);
+    color: #1a1d24;
+    box-shadow: 0 2px 8px rgba(205, 127, 50, 0.4);
+}
+
+/* Highlight top 3 rows */
+.leaderboard-table tr.rank-gold {
+    background: rgba(255, 215, 0, 0.05);
+}
+
+.leaderboard-table tr.rank-silver {
+    background: rgba(192, 192, 192, 0.05);
+}
+
+.leaderboard-table tr.rank-bronze {
+    background: rgba(205, 127, 50, 0.05);
+}
+
+.rank-col {
+    width: 60px;
+    text-align: center;
+}
+
+.player-col {
+    font-family: monospace;
+    color: #60a5fa;
+}
+
+.winrate-col {
+    font-weight: 600;
+    color: #22c55e;
+}
+
+.kda-col {
+    color: #a78bfa;
+}
+
+.no-rankings {
+    color: #9ca3af;
+    text-align: center;
+    padding: 3rem;
+}
+
+/* ===== Pagination ===== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #2d3139;
+}
+
+.page-btn {
+    padding: 0.5rem 1rem;
+    background: #262a33;
+    color: #fafafa;
+    border: 1px solid #3d4250;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.page-btn:hover {
+    background: #3d4250;
+    border-color: #4d5260;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-info {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* ===== Responsive Layouts ===== */
+@media (max-width: 768px) {
+    .top-bar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .tabs {
+        padding: 0 1rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .tab {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+
+    main {
+        padding: 1rem;
+    }
+
+    .match-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .match-filters,
+    .leaderboard-filters {
+        flex-direction: column;
+    }
+
+    .match-filters select,
+    .leaderboard-filters select {
+        width: 100%;
+    }
+
+    .leaderboard-table {
+        font-size: 0.875rem;
+    }
+
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 0.5rem;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .leaderboard-table .matches-col,
+    .leaderboard-table .wins-col {
+        display: none;
+    }
+
+    .match-summary,
+    .leaderboard-summary {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}

@@ -497,3 +497,39 @@
 - `rust-server/static/css/styles.css` (added tab-divider style)
 
 ---
+
+## Task 17 Completed - 2026-01-14
+
+### Update CSS styling
+
+**Changes made:**
+- Added comprehensive Match History styles:
+  - `.match-card` with hover effects (transform, box-shadow)
+  - `.match-card.match-win` with green left border (#22c55e)
+  - `.match-card.match-loss` with red left border (#ef4444)
+  - `.match-result.win` / `.match-result.loss` badges with colored backgrounds
+  - `.match-filters`, `.match-summary`, `.match-cards` grid layout
+- Added comprehensive Leaderboard styles:
+  - `.leaderboard-table` with sticky headers
+  - `.rank-badge.gold` / `.silver` / `.bronze` with gradient backgrounds and shadows
+  - `.rank-gold` / `.rank-silver` / `.rank-bronze` row highlights
+  - Column-specific styling (`.player-col`, `.winrate-col`, `.kda-col`)
+- Added Pagination styles:
+  - `.pagination` flexbox container
+  - `.page-btn` button styling with hover states
+  - `.page-info` centered page display
+- Added responsive layouts:
+  - `@media (max-width: 768px)`: Stacked top bar, scrollable tabs, single-column match cards, full-width filters
+  - `@media (max-width: 480px)`: Hide less important leaderboard columns, stack summary info
+- Verified with `cargo check` - passed
+- Tested CSS rendering via curl - all classes applied correctly
+
+**CSS sections added (~330 lines):**
+1. Match History Styles
+2. Leaderboard Styles
+3. Pagination
+4. Responsive Layouts
+
+**File modified:** `rust-server/static/css/styles.css`
+
+---
